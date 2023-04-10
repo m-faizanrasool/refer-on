@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
+use Stevebauman\Location\Facades\Location;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -30,6 +31,10 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $ip = '206.84.189.26'; //For local environment
+        // $ip = request()->ip(); //Dynamic IP address
+        $data = Location::get($ip) ? Location::get($ip) : null;
+
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user(),
@@ -39,6 +44,7 @@ class HandleInertiaRequests extends Middleware
                     'location' => $request->url(),
                 ]);
             },
+            'country' => compact('data'),
         ]);
     }
 }
