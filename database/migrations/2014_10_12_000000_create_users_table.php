@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->unsignedSmallInteger('demerit_points')->nullable()->index();
+            $table->timestamp('blocked_until')->nullable();
             $table->enum('status', ['ACTIVE', 'BLOCKED', 'PERMANENTLY_BLOCKED'])->default('ACTIVE');
             $table->rememberToken();
             $table->timestamps();
