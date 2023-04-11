@@ -36,7 +36,7 @@ class RegisteredUserController extends Controller
             'email' => 'required|string|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone' => ['required', 'unique:users','numeric'],
-            'country_code' => ['required', 'string']
+            'country_id' => ['required', 'numeric']
         ]);
 
         $validatedData['password'] = Hash::make($validatedData['password']);
@@ -48,5 +48,16 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
+    }
+
+    public function validateData(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:'.User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'phone' => ['required', 'unique:users','numeric'],
+            'country_id' => ['required', 'numeric']
+        ]);
     }
 }

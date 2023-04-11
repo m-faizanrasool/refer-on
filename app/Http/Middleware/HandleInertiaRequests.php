@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Country;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
 use Stevebauman\Location\Facades\Location;
@@ -33,11 +35,13 @@ class HandleInertiaRequests extends Middleware
     {
         $ip = '206.84.189.26'; //For local environment
         // $ip = request()->ip(); //Dynamic IP address
-        $data = Location::get($ip) ? Location::get($ip) : null;
+        $country_code = Location::get($ip);
+
+        $data = Country::where('code', $country_code->countryCode)->first();
 
         return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(),
+                'user' => Auth::user(),
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [

@@ -1,8 +1,23 @@
+@import "intl-tel-input/build/css/intlTelInput.css";
+
+.iti {
+    width: 100%;
+}
+
+.iti__selected-flag {
+    border-top-left-radius: 18px;
+    border-bottom-left-radius: 18px;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+    body {
+        @apply font-body;
+    }
+
     input:disabled,
     select:disabled,
     textarea:disabled {
