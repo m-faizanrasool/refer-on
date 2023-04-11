@@ -38,15 +38,23 @@ const initFirebase = () => {
   state.firebaseAppVerifier = new RecaptchaVerifier(
     "recaptcha-container",
     {
-      size: "invisible",
+      size: "normal",
       callback: (response) => {
         // reCAPTCHA solved, allow signInWithPhoneNumber.
         console.log("callback", response);
         onSignInSubmit();
       },
+      "expired-callback": () => {
+        // Response expired. Ask user to solve reCAPTCHA again.
+      },
     },
     state.firebaseAuth
   );
+
+  state.firebaseAppVerifier.render().then((widgetId) => {
+    const recaptchaResponse = grecaptcha.getResponse(widgetId);
+    console.log(recaptchaResponse);
+  });
 };
 
 onMounted(() => {
