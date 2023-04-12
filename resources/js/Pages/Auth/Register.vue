@@ -43,27 +43,16 @@ const initFirebase = () => {
 
     state.firebaseApp = initializeApp(firebaseConfig);
     state.firebaseAuth = getAuth(state.firebaseApp);
+};
+
+const initRecaptcha = () => {
     state.firebaseAppVerifier = new RecaptchaVerifier(
         "recaptcha-container",
         {
             size: "normal",
             callback: (response) => {
                 // reCAPTCHA solved, allow signInWithPhoneNumber.
-                // console.log("callback", response);
-
-                signInWithPhoneNumber(
-                    state.firebaseAuth,
-                    phoneInput.value.getNumber(),
-                    state.firebaseAppVerifier
-                )
-                    .then((confirmationResult) => {
-                        state.confirmationResult = confirmationResult;
-
-                        msgSuccess.value = "Message sent successfully.";
-                    })
-                    .catch((error) => {
-                        console.log("error", error.message);
-                    });
+                sendOTP();
             },
             "expired-callback": () => {
                 // Response expired. Ask user to solve reCAPTCHA again.
@@ -77,7 +66,41 @@ const initFirebase = () => {
     });
 };
 
+const sendOTP = () => {
+    signInWithPhoneNumber(
+        state.firebaseAuth,
+        phoneInput.value.getNumber(),
+        state.firebaseAppVerifier
+    )
+        .then((confirmationResult) => {
+            state.confirmationResult = confirmationResult;
+
+            msgSuccess.value = "Message sent successfully.";
+            state.firebaseAppVerifier.clear();
+        })
+        .catch((error) => {
+            console.log("error", error.message);
+        });
+};
+
+const otpVerify = () => {
+    state.confirmationResult
+        .confirm(otp.value)
+        .then((result) => {
+            // User signed in successfully.
+            const user = result.user;
+            console.log("success", "You are successfully logged in.");
+
+            otpVerified.value = true;
+        })
+        .catch((error) => {
+            console.log("error", error.message);
+        });
+};
+
 onMounted(() => {
+    initFirebase();
+
     const input = document.querySelector("#phone");
 
     phoneInput.value = intlTelInput(input, {
@@ -97,31 +120,18 @@ const onSignInSubmit = () => {
         return;
     }
 
-    form.transform((data) => ({
-        ...data,
-        phone: phoneInput.value.getNumber(),
-    })).post("register-validate", {
-        onError: () => {
-            form.reset("password", "password_confirmation");
-        },
-        onSuccess: () => {
-            initFirebase();
-        },
-    });
-};
-
-const otpVerify = () => {
-    state.confirmationResult
-        .confirm(otp.value)
-        .then((result) => {
-            // User signed in successfully.
-            const user = result.user;
-            console.log("success", "You are successfully logged in.");
-
-            otpVerified.value = true;
-        })
-        .catch((error) => {
-            console.log("error", error.message);
+    form
+        .transform((data) => ({
+            ...data,
+            phone: phoneInput.value.getNumber(),
+        }))
+        .post("register-validate", {
+            onError: () => {
+                form.reset("password", "password_confirmation");
+            },
+            onSuccess: () => {
+                initRecaptcha();
+            },
         });
 };
 
