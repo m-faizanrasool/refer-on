@@ -28,6 +28,7 @@ let country = computed(() => usePage().props.country.data);
 const phoneInput = ref();
 const msgSuccess = ref("");
 const otp = ref();
+const showOtpblock = ref(false);
 const otpVerified = ref(false);
 
 const initFirebase = () => {
@@ -77,8 +78,11 @@ const sendOTP = () => {
 
             msgSuccess.value = "Message sent successfully.";
             state.firebaseAppVerifier.clear();
+            showOtpblock.value = true;
         })
         .catch((error) => {
+            initRecaptcha();
+            showOtpblock.value = false;
             console.log("error", error.message);
         });
 };
@@ -120,19 +124,17 @@ const onSignInSubmit = () => {
         return;
     }
 
-    form
-        .transform((data) => ({
-            ...data,
-            phone: phoneInput.value.getNumber(),
-        }))
-        .post("register-validate", {
-            onError: () => {
-                form.reset("password", "password_confirmation");
-            },
-            onSuccess: () => {
-                initRecaptcha();
-            },
-        });
+    form.transform((data) => ({
+        ...data,
+        phone: phoneInput.value.getNumber(),
+    })).post("register-validate", {
+        onError: () => {
+            form.reset("password", "password_confirmation");
+        },
+        onSuccess: () => {
+            initRecaptcha();
+        },
+    });
 };
 
 let form = useForm({
@@ -222,22 +224,25 @@ const submit = () => {
                             <div id="recaptcha-container"></div>
                         </div>
 
-                        <div class="flex gap-2 mt-4" v-if="form.wasSuccessful">
-                            <TextInput
-                                id="otp"
-                                type="number"
-                                class="block w-full mt-1"
-                                placeholder="OTP"
-                                v-model="otp"
-                                autocomplete="otp"
-                            />
-
-                            <button
-                                class="w-full btn btn-primary"
-                                @click="otpVerify()"
+                        <div class="mt-4" v-if="showOtpblock">
+                            <form
+                                @submit.prevent="otpVerify()"
+                                class="flex gap-2"
                             >
-                                Verify Otp
-                            </button>
+                                <TextInput
+                                    id="otp"
+                                    type="number"
+                                    class="block w-full mt-1"
+                                    placeholder="OTP"
+                                    v-model="otp"
+                                    required
+                                    autocomplete="otp"
+                                />
+
+                                <button class="w-full btn btn-primary">
+                                    Verify Otp
+                                </button>
+                            </form>
                         </div>
 
                         <div

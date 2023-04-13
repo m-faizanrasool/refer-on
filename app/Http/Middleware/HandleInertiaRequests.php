@@ -37,7 +37,7 @@ class HandleInertiaRequests extends Middleware
         // $ip = request()->ip(); //Dynamic IP address
         $country_code = Location::get($ip);
 
-        $data = Country::where('code', $country_code->countryCode)->first();
+        $data = Country::where('code', $country_code->countryCode ?? "PK")->first();
 
         return array_merge(parent::share($request), [
             'auth' => [

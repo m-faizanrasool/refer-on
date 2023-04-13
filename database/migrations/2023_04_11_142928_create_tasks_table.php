@@ -23,7 +23,7 @@ class CreateTasksTable extends Migration
             $table->string('website');
             $table->text('summary');
             $table->integer('submitter_credits');
-            $table->integer('completor_credits')->nullable();
+            $table->integer('executor_credits')->nullable();
             $table->enum('status', ['VERIFIED', 'DISPUTED', 'PENDING_VERIFICATION', 'INVALID', 'AVAILABLE'])->default('AVAILABLE');
             $table->json('tags')->nullable();
             $table->timestamps();

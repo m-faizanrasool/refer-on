@@ -2,16 +2,14 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <base href="{{ url('/') }}/" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Fonts -->
-    <!-- Fonts -->
+    <!-- Font -->
     <link href="{{ asset('fonts/Madefor.css') }}" rel="stylesheet">
-
-    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-element-bundle.min.js"></script>
 
     <!-- Scripts -->
     @routes
