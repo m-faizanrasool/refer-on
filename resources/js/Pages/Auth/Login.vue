@@ -31,7 +31,7 @@ const submit = () => {
 
         <h1 class="page-heading">Login</h1>
 
-        <form @submit.prevent="submit" class="w-3/5 mx-auto">
+        <form @submit.prevent="submit" class="mx-auto sm:w-3/5">
             <div>
                 <InputLabel for="email" value="Email" />
 
@@ -75,7 +75,7 @@ const submit = () => {
                     :href="route('register')"
                     class="text-sm text-gray-600 underline rounded-md hover:text-gray-900 focus:outline-none"
                 >
-                    Not a User? Register.
+                    Not a User? Register
                 </Link>
 
                 <Link

@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "firebase": "^9.19.1",
+        "flag-icons": "^6.6.6",
         "intl-tel-input": "^18.1.0"
     }
 }

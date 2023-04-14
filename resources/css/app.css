@@ -1,4 +1,5 @@
 @import "intl-tel-input/build/css/intlTelInput.css";
+@import "/node_modules/flag-icons/css/flag-icons.min.css";
 
 .iti {
     width: 100%;
@@ -15,7 +16,7 @@
 
 @layer base {
     body {
-        @apply font-body;
+        @apply font-body text-[#575353];
     }
 
     input:disabled,
@@ -67,6 +68,13 @@
 
     .page-heading {
         @apply text-3xl font-bold leading-tight text-[#575353] mb-6;
+    }
+
+    .avatar {
+        @apply w-8 h-8 overflow-hidden rounded-full md:w-10 md:h-10;
+    }
+    .avatar > img {
+        @apply w-full h-full bg-cover;
     }
 }
 

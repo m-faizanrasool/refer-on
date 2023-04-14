@@ -3,7 +3,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import TextInput from "@/Components/TextInput.vue";
 import Carousel from "@/Components/Carousal.vue";
 
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { router, Head, Link } from "@inertiajs/vue3";
 
 const search = ref("");
@@ -36,7 +36,7 @@ defineProps({
     <Head title="Home" />
 
     <AppLayout>
-        <div class="w-4/6 mx-auto">
+        <div class="mx-auto md:w-4/6">
             <div class="mt-10">
                 <h1 class="font-bold text-center page-heading">REFERON</h1>
 
@@ -65,14 +65,12 @@ defineProps({
 
             <div v-if="!availableTasks.length && (search || quereyParam)">
                 <div class="flex flex-col items-center mt-10">
-                    <h1 class="mb-2 text-2xl font-bold color-primary">
+                    <h1 class="mb-2 text-2xl font-bold text-center">
                         Currently, there is no task for
                         {{ search || quereyParam }}
                     </h1>
 
-                    <h2 class="mb-6 color-primary">
-                        Check back here regularly, or
-                    </h2>
+                    <h2 class="mb-6">Check back here regularly, or</h2>
 
                     <Link :href="route('task.create')">
                         <button class="btn btn-primary">

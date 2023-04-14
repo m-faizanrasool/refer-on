@@ -36,21 +36,21 @@ const complete = () => {
     <AppLayout>
         <Head title="Task" />
 
-        <div class="grid grid-cols-2">
+        <div class="grid sm:grid-cols-2">
             <div class="px-8 py-6 bg-gray-200 rounded-md">
-                <div class="mb-4 text-2xl font-bold color-primary">
-                    {{ task?.brand?.name ?? "Brand Name" }}
+                <div class="mb-4 text-2xl font-bold">
+                    {{ task.brand.name }}
                 </div>
 
-                <div class="mb-4 text-lg font-bold color-primary">
+                <div class="mb-4 text-lg font-bold">
                     Thank you for completing the job.
                 </div>
 
-                <div class="px-4 mb-4">
+                <div class="mb-4 md:px-4">
                     <TextInput
                         id="country"
                         type="text"
-                        class="block w-full mt-1 font-bold text-center !rounded-xl color-primary"
+                        class="block w-full mt-1 font-bold text-center"
                         readonly
                         ref="taskKey"
                         :value="task.key"
@@ -58,19 +58,19 @@ const complete = () => {
                     />
                 </div>
 
-                <div class="mb-4 text-lg font-bold color-primary">
+                <div class="mb-4 text-lg font-bold">
                     You got ${{ task.executor_credits }}
                 </div>
 
-                <div class="mb-4 text-lg font-bold color-primary">
+                <div class="mb-4 text-lg font-bold">
                     Please key in your task.
                 </div>
 
-                <div class="px-4 mb-4">
+                <div class="mb-4 md:px-4">
                     <TextInput
                         id="country"
                         type="text"
-                        class="block w-full mt-1 font-bold !rounded-xl color-primary"
+                        class="block w-full mt-1 font-bold"
                         placeholder="task_78767"
                         v-model="form.key"
                     />
@@ -78,7 +78,7 @@ const complete = () => {
                     <InputError class="mt-2" :message="form.errors.key" />
                 </div>
 
-                <div class="mx-4 my-4">
+                <div class="my-4 md:px-4">
                     <button class="w-full btn btn-primary" @click="complete">
                         Proceed to post
                     </button>

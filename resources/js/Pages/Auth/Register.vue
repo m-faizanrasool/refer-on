@@ -26,7 +26,7 @@ const state = reactive({
 let country = computed(() => usePage().props.country.data);
 
 const phoneInput = ref();
-const msgSuccess = ref("");
+const message = ref("");
 const otp = ref();
 const showOtpblock = ref(false);
 const otpVerified = ref(false);
@@ -76,7 +76,7 @@ const sendOTP = () => {
         .then((confirmationResult) => {
             state.confirmationResult = confirmationResult;
 
-            msgSuccess.value = "Message sent successfully.";
+            message.value = "Message sent successfully.";
             state.firebaseAppVerifier.clear();
             showOtpblock.value = true;
         })
@@ -93,7 +93,8 @@ const otpVerify = () => {
         .then((result) => {
             // User signed in successfully.
             const user = result.user;
-            console.log("success", "You are successfully logged in.");
+            message.value =
+                "Otp verify success, Please click the register button.";
 
             otpVerified.value = true;
         })
@@ -162,156 +163,149 @@ const submit = () => {
 
         <h1 class="page-heading">Register</h1>
 
-        <div class="w-3/5 mx-auto">
-            <div class="flex gap-x-10">
-                <div class="flex flex-col w-full gap-4">
-                    <div>
-                        <InputLabel for="name" value="Country" />
+        <div class="mx-auto lg:w-3/5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
+                <div>
+                    <InputLabel for="name" value="Country" />
 
-                        <TextInput
-                            id="country"
-                            type="text"
-                            class="block w-full mt-1"
-                            :placeholder="country.name"
-                            required
-                            disabled
-                        />
-                    </div>
-
-                    <div>
-                        <InputLabel for="name" value="Name*" />
-
-                        <TextInput
-                            id="name"
-                            type="text"
-                            class="block w-full mt-1"
-                            v-model="form.name"
-                            placeholder="John Doe"
-                            :disabled="form.wasSuccessful"
-                            required
-                            autofocus
-                            autocomplete="name"
-                        />
-
-                        <InputError class="mt-2" :message="form.errors.name" />
-                    </div>
-
-                    <div>
-                        <InputLabel for="email" value="Phone Number*" />
-
-                        <TextInput
-                            id="phone"
-                            type="text"
-                            class="block w-full mt-1"
-                            :disabled="form.wasSuccessful"
-                            v-model="form.phone"
-                            required
-                            autocomplete="phone"
-                        />
-
-                        <InputError class="mt-2" :message="form.errors.phone" />
-                    </div>
-
-                    <div>
-                        <div class="space-y-4">
-                            <button
-                                class="w-full btn btn-primary"
-                                @click="onSignInSubmit()"
-                            >
-                                Request captcha and OTP
-                            </button>
-
-                            <div id="recaptcha-container"></div>
-                        </div>
-
-                        <div class="mt-4" v-if="showOtpblock">
-                            <form
-                                @submit.prevent="otpVerify()"
-                                class="flex gap-2"
-                            >
-                                <TextInput
-                                    id="otp"
-                                    type="number"
-                                    class="block w-full mt-1"
-                                    placeholder="OTP"
-                                    v-model="otp"
-                                    required
-                                    autocomplete="otp"
-                                />
-
-                                <button class="w-full btn btn-primary">
-                                    Verify Otp
-                                </button>
-                            </form>
-                        </div>
-
-                        <div
-                            v-text="msgSuccess"
-                            class="mt-3 ml-2 text-green-600"
-                        ></div>
-                    </div>
+                    <TextInput
+                        id="country"
+                        type="text"
+                        class="block w-full mt-1"
+                        :placeholder="country.name"
+                        required
+                        disabled
+                    />
                 </div>
 
-                <div class="flex flex-col w-full gap-4">
-                    <div>
-                        <InputLabel for="email" value="Email*" />
+                <div>
+                    <InputLabel for="name" value="Name*" />
 
-                        <TextInput
-                            id="email"
-                            type="email"
-                            class="block w-full mt-1"
-                            placeholder="johndoe@example.com"
-                            :disabled="form.wasSuccessful"
-                            v-model="form.email"
-                            required
-                            autocomplete="username"
-                        />
+                    <TextInput
+                        id="name"
+                        type="text"
+                        class="block w-full mt-1"
+                        v-model="form.name"
+                        placeholder="John Doe"
+                        :disabled="form.wasSuccessful"
+                        required
+                        autofocus
+                        autocomplete="name"
+                    />
 
-                        <InputError class="mt-2" :message="form.errors.email" />
+                    <InputError class="mt-2" :message="form.errors.name" />
+                </div>
+
+                <div>
+                    <InputLabel for="email" value="Phone Number*" />
+
+                    <TextInput
+                        id="phone"
+                        type="text"
+                        class="block w-full mt-1"
+                        :disabled="form.wasSuccessful"
+                        v-model="form.phone"
+                        required
+                        autocomplete="phone"
+                    />
+
+                    <InputError class="mt-2" :message="form.errors.phone" />
+                </div>
+
+                <div>
+                    <InputLabel for="email" value="Email*" />
+
+                    <TextInput
+                        id="email"
+                        type="email"
+                        class="block w-full mt-1"
+                        placeholder="johndoe@example.com"
+                        :disabled="form.wasSuccessful"
+                        v-model="form.email"
+                        required
+                        autocomplete="username"
+                    />
+
+                    <InputError class="mt-2" :message="form.errors.email" />
+                </div>
+
+                <div>
+                    <InputLabel for="password" value="Password*" />
+
+                    <TextInput
+                        id="password"
+                        type="password"
+                        class="block w-full mt-1"
+                        v-model="form.password"
+                        :disabled="form.wasSuccessful"
+                        placeholder="********"
+                        required
+                        autocomplete="new-password"
+                    />
+
+                    <InputError class="mt-2" :message="form.errors.password" />
+                </div>
+
+                <div>
+                    <InputLabel
+                        for="password_confirmation"
+                        value="Confirm Password*"
+                    />
+
+                    <TextInput
+                        id="password_confirmation"
+                        type="password"
+                        class="block w-full mt-1"
+                        v-model="form.password_confirmation"
+                        :disabled="form.wasSuccessful"
+                        placeholder="********"
+                        required
+                        autocomplete="new-password"
+                    />
+
+                    <InputError
+                        class="mt-2"
+                        :message="form.errors.password_confirmation"
+                    />
+                </div>
+
+                <div>
+                    <div class="space-y-4">
+                        <button
+                            class="w-full btn btn-primary"
+                            @click="onSignInSubmit()"
+                        >
+                            Request captcha and OTP
+                        </button>
+
+                        <div
+                            id="recaptcha-container"
+                            class="flex justify-center"
+                        ></div>
                     </div>
 
-                    <div>
-                        <InputLabel for="password" value="Password*" />
+                    <div class="mt-4" v-if="showOtpblock">
+                        <form @submit.prevent="otpVerify()" class="flex gap-2">
+                            <TextInput
+                                id="otp"
+                                type="number"
+                                class="block w-full mt-1"
+                                placeholder="OTP"
+                                v-model="otp"
+                                required
+                                autocomplete="otp"
+                            />
 
-                        <TextInput
-                            id="password"
-                            type="password"
-                            class="block w-full mt-1"
-                            v-model="form.password"
-                            :disabled="form.wasSuccessful"
-                            placeholder="********"
-                            required
-                            autocomplete="new-password"
-                        />
-
-                        <InputError
-                            class="mt-2"
-                            :message="form.errors.password"
-                        />
+                            <button class="w-full btn btn-primary">
+                                Verify Otp
+                            </button>
+                        </form>
                     </div>
 
-                    <div>
-                        <InputLabel
-                            for="password_confirmation"
-                            value="Confirm Password*"
-                        />
-
-                        <TextInput
-                            id="password_confirmation"
-                            type="password"
-                            class="block w-full mt-1"
-                            v-model="form.password_confirmation"
-                            :disabled="form.wasSuccessful"
-                            placeholder="********"
-                            required
-                            autocomplete="new-password"
-                        />
-
-                        <InputError
-                            class="mt-2"
-                            :message="form.errors.password_confirmation"
-                        />
-                    </div>
+                    <div
+                        v-text="message"
+                        class="mt-3 ml-2 text-green-600"
+                    ></div>
                 </div>
             </div>
 

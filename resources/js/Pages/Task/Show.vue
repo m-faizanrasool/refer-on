@@ -15,23 +15,23 @@ defineProps({
     <AppLayout>
         <Head title="Task" />
 
-        <div class="grid md:grid-cols-2">
+        <div class="grid sm:grid-cols-2">
             <div class="px-8 py-6 bg-gray-200 rounded-md">
-                <div class="mb-4 text-2xl font-bold color-primary">
+                <div class="mb-4 text-2xl font-bold">
                     {{ task.brand.name }}
                 </div>
 
-                <div class="mb-4 text-lg font-bold color-primary">
+                <div class="mb-4 text-lg font-bold">
                     {{ task.submitter.name }} will get ${{
                         task.submitter_credits
                     }}
                 </div>
 
-                <div class="px-4 mb-4">
+                <div class="mb-4 sm:px-4">
                     <TextInput
                         id="country"
                         type="text"
-                        class="block w-full mt-1 font-bold text-center !rounded-xl color-primary"
+                        class="block w-full mt-1 font-bold text-center !rounded-xl"
                         readonly
                         ref="taskKey"
                         :value="task.key"
@@ -39,20 +39,18 @@ defineProps({
                     />
                 </div>
 
-                <div class="text-lg font-bold color-primary">
+                <div class="text-lg font-bold">
                     You will get ${{ task.executor_credits }}
                 </div>
 
-                <div class="mx-8 my-4">
+                <div class="mt-4 space-y-4 sm:mx-8">
                     <Link
                         class="block w-full text-center btn btn-primary"
                         :href="route('task.fulfill', task.id)"
                     >
                         Proceed to fullfill
                     </Link>
-                </div>
 
-                <div class="mx-8 my-4">
                     <button class="w-full font-bold border border-black btn">
                         Report invalid task
                     </button>
