@@ -88,10 +88,12 @@ class TaskController extends Controller
             'task_id' => ['required', 'numeric'],
         ]);
 
-        $task = Task::findOrFail($validatedData['task_id']);
+        $parent_id = $validatedData['task_id'];
+        $task = Task::findOrFail($parent_id);
 
         //create new task
         $newTask = Task::create([
+            'parent_id' => $parent_id, // to access the parent_id in Model's booted methods (being unset there)
             'key' => $validatedData['key'],
             'brand_id' => $task->brand_id,
             'country_id' => $task->country_id,
