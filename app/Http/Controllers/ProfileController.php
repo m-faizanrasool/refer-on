@@ -50,6 +50,9 @@ class ProfileController extends Controller
         ->get();
 
         $formattedTasks = $tasks->map(function ($task) {
+            $task->submitter_name = $task->submitter->name;
+            $task->executor_name = $task->executor->name;
+            $task->submitter_demerit_points = $task->status == "INVALID" ? $task->submitter->demerit_points + 1 : $task->submitter->demerit_points;
             $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
             return $task;
         });
