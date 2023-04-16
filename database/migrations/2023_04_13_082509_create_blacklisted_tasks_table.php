@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('blacklisted_tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique()->index();
+            $table->string('key')->index();
             $table->unsignedSmallInteger('country_id')->index();
             $table->unsignedSmallInteger('brand_id')->index();
             $table->string('source')->nullable();

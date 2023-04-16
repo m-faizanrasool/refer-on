@@ -55,7 +55,7 @@
     }
 
     .btn-success {
-        @apply bg-green-700 hover:bg-green-800 focus:ring-green-300;
+        @apply font-bold text-white bg-green-700 hover:bg-green-800 focus:ring-green-300;
     }
 
     .btn-primary {
@@ -75,6 +75,18 @@
     }
     .avatar > img {
         @apply w-full h-full bg-cover;
+    }
+
+    .table-head > div {
+        @apply px-2 py-4 text-sm font-bold leading-none text-black uppercase m-[1px] min-w-[150px] p-1;
+    }
+
+    .table-head:nth-child(odd) > div {
+        @apply bg-[#cfd7e7];
+    }
+
+    .table-head:nth-child(even) > div {
+        @apply bg-[#e8ecf4];
     }
 }
 

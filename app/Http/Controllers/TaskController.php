@@ -35,12 +35,9 @@ class TaskController extends Controller
             'brand.unique' => 'The :attribute name already exists.',
         ]);
 
-        $validatedData['key'] = strtolower(str_replace(' ', '-', $validatedData['brand']));
-
         //create brand
         $brand = Brand::create([
-            'key' =>  $validatedData['key'],
-            'name' => $validatedData['brand'],
+            'name' =>  $validatedData['brand'],
         ]);
 
         //create task

@@ -23,9 +23,29 @@ class Task extends Model
         'status',
     ];
 
+    protected $appends = [
+        'brand_name',
+        'country_name',
+    ];
+
+    public function getBrandNameAttribute()
+    {
+        return $this->brand->name;
+    }
+
+    public function getCountryNameAttribute()
+    {
+        return $this->country->name;
+    }
+
     public function submitter()
     {
         return $this->belongsTo(User::class, 'submitter_id');
+    }
+
+    public function executor()
+    {
+        return $this->belongsTo(User::class, 'executor_id');
     }
 
     public function brand()

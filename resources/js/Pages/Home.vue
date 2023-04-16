@@ -5,18 +5,22 @@ import Carousel from "@/Components/Carousal.vue";
 
 import { ref, watch } from "vue";
 import { router, Head, Link } from "@inertiajs/vue3";
+import { throttle } from "lodash";
 
 const search = ref("");
 
-watch(search, (value) => {
-    router.get(
-        route("home"),
-        { search: value },
-        {
-            preserveState: true,
-        }
-    );
-});
+watch(
+    search,
+    throttle(function (value) {
+        router.get(
+            route("home"),
+            { search: value },
+            {
+                preserveState: true,
+            }
+        );
+    }, 500)
+);
 
 let logos = [
     { src: "images/logos/adidas.png", alt: "adidas" },
@@ -43,8 +47,13 @@ defineProps({
                 <TextInput
                     type="text"
                     class="block w-full mt-1"
-                    placeholder="Search for brands or stores with tasks"
+                    :placeholder="
+                        !$page.props.auth.user
+                            ? 'Please login first to search for brands or stores with tasks'
+                            : 'Search for brands or stores with tasks'
+                    "
                     v-model="search"
+                    :disabled="!$page.props.auth.user"
                 />
             </div>
 

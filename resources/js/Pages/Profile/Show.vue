@@ -3,6 +3,13 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import TextInput from "@/Components/TextInput.vue";
 
 import { Head, Link } from "@inertiajs/vue3";
+
+defineProps({
+    fulfilledTasks: Number,
+    fulfilledTasksEarnings: Number,
+    tasksFulfilledByOthers: Number,
+    tasksFulfilledByOthersEarnings: Number,
+});
 </script>
 
 <template>
@@ -22,7 +29,7 @@ import { Head, Link } from "@inertiajs/vue3";
                         id="otp"
                         type="number"
                         class="block text-center"
-                        placeholder="$5"
+                        :value="fulfilledTasks"
                         readonly
                     />
                 </div>
@@ -33,10 +40,9 @@ import { Head, Link } from "@inertiajs/vue3";
                     Your earings
 
                     <TextInput
-                        id="otp"
-                        type="number"
+                        type="text"
                         class="block text-center"
-                        placeholder="$5"
+                        :value="`$${fulfilledTasksEarnings}`"
                         readonly
                     />
                 </div>
@@ -49,10 +55,9 @@ import { Head, Link } from "@inertiajs/vue3";
                     Your tasks that other fulfilled.
 
                     <TextInput
-                        id="otp"
                         type="number"
                         class="block text-center"
-                        placeholder="$5"
+                        :value="tasksFulfilledByOthers"
                         readonly
                     />
                 </div>
@@ -64,9 +69,9 @@ import { Head, Link } from "@inertiajs/vue3";
 
                     <TextInput
                         id="otp"
-                        type="number"
+                        type="text"
                         class="block text-center"
-                        placeholder="$5"
+                        :value="`$${tasksFulfilledByOthersEarnings}`"
                         readonly
                     />
                 </div>
@@ -74,7 +79,9 @@ import { Head, Link } from "@inertiajs/vue3";
         </div>
 
         <div class="flex items-center mt-6">
-            <Link class="mx-auto btn btn-primary" :href="route('profile.edit')"
+            <Link
+                class="mx-auto btn btn-primary"
+                :href="route('profile.detail')"
                 >Details</Link
             >
         </div>

@@ -15,7 +15,7 @@ class HomeController extends Controller
 
         $availableTasks = [];
 
-        if (!empty($query)) {
+        if (!empty($query) && Auth::user()) {
             $tasks = Task::with(['submitter', 'brand'])
                 ->where([
                     'country_id' => Auth::user()->country_id,

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Task;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,9 +16,51 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
-    public function show(Request $request): Response
+    public function show()
     {
-        return Inertia::render('Profile/Show');
+        $user_id = Auth::user()->id;
+
+        $task = Task::where('status', 'VERIFIED')
+        ->where(function ($q) use ($user_id) {
+            $q->where('executor_id', $user_id)
+                ->orWhere('submitter_id', $user_id);
+        })->get();
+
+        return Inertia::render('Profile/Show', [
+            'fulfilledTasks' => $task->where('executor_id', $user_id)->count(),
+            'fulfilledTasksEarnings' => $task->sum('executor_credits'),
+            'tasksFulfilledByOthers' => $task->where('submitter_id', $user_id)->count(),
+            'tasksFulfilledByOthersEarnings' => $task->where('submitter_id', $user_id)->sum('submitter_credits'),
+        ]);
+    }
+
+    public function detail($user_id = null)
+    {
+        $auth_user = Auth::user();
+
+        if ($auth_user->is_admin && $user_id) {
+            $user = User::findOrFail($user_id);
+        } else {
+            $user = $auth_user;
+        }
+
+        $tasks = Task::with(['submitter','executor'])
+        ->where('executor_id', $user->id)
+        ->orWhere('submitter_id', $user->id)
+        ->get();
+
+        $formattedTasks = $tasks->map(function ($task) {
+            $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
+            return $task;
+        });
+
+        return Inertia::render('Profile/Detail', [
+            'fulfilledTaskCount' => $tasks->where('executor_id', $user->id)->count(),
+            'fulfilledTasksEarnings' => $tasks->sum('executor_credits'),
+            'tasksFulfilledByOthersCount' => $tasks->where('submitter_id', $user_id)->count(),
+            'tasksFulfilledByOthersEarnings' => $tasks->where('submitter_id', $user_id)->sum('submitter_credits'),
+            'tasks' => $formattedTasks,
+        ]);
     }
 
     /**
