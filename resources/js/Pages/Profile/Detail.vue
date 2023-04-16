@@ -8,16 +8,13 @@ const props = usePage().props;
 
 const searchOtherTasks = ref("");
 const searchMyTasks = ref("");
-const sortFulfilledTasksBy = ref("date");
+const sortFulfilledTasksBy = ref("formatted_created_at");
 const sortFulfilledTasksDesc = ref(true);
 
-const filterTasks = (searchValue, userId) => {
+const filterTasks = (searchValue, userId, taskType) => {
     return props.tasks.filter((task) => {
-        if (task.executor_id !== userId) return false;
-
-        if (searchValue === "") return true;
-
         const searchLower = searchValue.toLowerCase();
+
         const fieldsToSearch = [
             task.country_name,
             task.formatted_created_at,
@@ -27,8 +24,21 @@ const filterTasks = (searchValue, userId) => {
             task.status,
         ];
 
-        return fieldsToSearch.some((field) =>
-            field.toLowerCase().includes(searchLower)
+        let taskUserId;
+
+        if (taskType === "submitter") {
+            taskUserId = task.submitter_id;
+        }
+
+        if (taskType === "executor") {
+            taskUserId = task.executor_id;
+        }
+
+        return (
+            taskUserId === userId &&
+            fieldsToSearch.some((field) =>
+                field.toLowerCase().includes(searchLower)
+            )
         );
     });
 };
@@ -48,12 +58,20 @@ const sortTasks = (tasks) => {
 };
 
 const fulfilledTasks = computed(() => {
-    let filteredTasks = filterTasks(searchOtherTasks.value, props.auth.user.id);
+    let filteredTasks = filterTasks(
+        searchOtherTasks.value,
+        props.auth.user.id,
+        "executor"
+    );
     return sortTasks(filteredTasks);
 });
 
 const tasksFulfilledByOthers = computed(() => {
-    let filteredTasks = filterTasks(searchMyTasks.value, props.auth.user.id);
+    let filteredTasks = filterTasks(
+        searchMyTasks.value,
+        props.auth.user.id,
+        "submitter"
+    );
     return sortTasks(filteredTasks);
 });
 
@@ -62,7 +80,6 @@ defineProps({
     fulfilledTasksEarnings: Number,
     tasksFulfilledByOthersCount: Number,
     tasksFulfilledByOthersEarnings: Number,
-    tasks: Object,
 });
 </script>
 

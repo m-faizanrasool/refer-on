@@ -56,9 +56,9 @@ class ProfileController extends Controller
 
         return Inertia::render('Profile/Detail', [
             'fulfilledTaskCount' => $tasks->where('executor_id', $user->id)->count(),
-            'fulfilledTasksEarnings' => $tasks->sum('executor_credits'),
-            'tasksFulfilledByOthersCount' => $tasks->where('submitter_id', $user_id)->count(),
-            'tasksFulfilledByOthersEarnings' => $tasks->where('submitter_id', $user_id)->sum('submitter_credits'),
+            'fulfilledTasksEarnings' => $tasks->where('executor_id', $user->id)->sum('executor_credits'),
+            'tasksFulfilledByOthersCount' => $tasks->where('submitter_id', $user->id)->count(),
+            'tasksFulfilledByOthersEarnings' => $tasks->where('submitter_id', $user->id)->sum('submitter_credits'),
             'tasks' => $formattedTasks,
         ]);
     }
