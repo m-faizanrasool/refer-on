@@ -5,7 +5,8 @@ import Carousel from "@/Components/Carousal.vue";
 
 import { ref, watch } from "vue";
 import { router, Head, Link, usePage } from "@inertiajs/vue3";
-import { throttle } from "lodash";
+import pkg from "lodash";
+const { throttle } = pkg;
 
 const search = ref("");
 const user = usePage().props.auth.user;

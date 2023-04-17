@@ -10,5 +10,5 @@ defineProps({
 <template>
     <Head title="Error" />
 
-    <AppLayout> </AppLayout>
+    <AppLayout></AppLayout>
 </template>

@@ -1,11 +1,11 @@
 <script setup>
-import { throttle } from "lodash";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
-
 import { TailwindPagination } from "laravel-vue-pagination";
+import { ref, watch } from "vue";
+import pkg from "lodash";
 
-import { ref, watchEffect, watch } from "vue";
+const { throttle } = pkg;
 
 const search = ref("");
 
