@@ -81,14 +81,14 @@ class TaskService
 
             $executor = User::findOrFail($executor_id ?? Auth::id());
 
-            $task_already_completed = Task::where(["executor_id" => $executor_id, "country_id" => $executor->country_id, "brand_id" => $task->brand_id])->exists();
+            $task_already_completed = Task::where(["executor_id" => $executor->id, "country_id" => $executor->country_id, "brand_id" => $task->brand_id])->exists();
 
             if ($task_already_completed) {
                 throw new HttpException(409, "You already completed a task for this brand and country");
             }
         } catch (HttpException $exception) {
-            if (!empty($task->parent_task_id)) {
-                self::resetToAvailable($task->parent_task_id);
+            if (!empty($task->parent_id)) {
+                self::resetToAvailable($task->parent_id);
                 // TODO: self::createLog();
             }
 

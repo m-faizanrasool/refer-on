@@ -16,7 +16,7 @@ class TaskObserver
     public function creating(Task $task)
     {
         TaskService::validate($task);
-        unset($task->perent_id);
+        unset($task->parent_id);
     }
 
     /**
