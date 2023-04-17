@@ -21,20 +21,21 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name("home");
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/detail/{user_id?}', [ProfileController::class, 'detail'])->name('profile.detail');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('profile/show', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('profile/detail/{user_id?}', [ProfileController::class, 'detail'])->name('profile.detail');
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/task/fulfill/{task_id}', [TaskController::class, 'fulfill'])->name('task.fulfill');
-    Route::post('/task/complete', [TaskController::class, 'complete'])->name('task.complete');
-    Route::get('/task/created/{task_id}', [TaskController::class, 'created'])->name('task.created');
+    Route::get('task/fulfill/{task_id}', [TaskController::class, 'fulfill'])->name('task.fulfill');
+    Route::post('task/complete', [TaskController::class, 'complete'])->name('task.complete');
+    Route::get('task/created/{task_id}', [TaskController::class, 'created'])->name('task.created');
+    Route::patch('task', [TaskController::class, 'updateStatus'])->name('task.updateStatus');
 
     Route::resources([
-        '/user' => UserController::class,
-        '/task' => TaskController::class,
-        '/blacklisted-tasks' => BlacklistedTaskController::class,
+        'user' => UserController::class,
+        'task' => TaskController::class,
+        'blacklisted-tasks' => BlacklistedTaskController::class,
     ]);
 });
 

@@ -1,9 +1,9 @@
 <script setup>
+import { Link } from "@inertiajs/vue3";
 import { ref } from "vue";
 
 const open = ref(false);
 const dimmer = ref(true);
-const right = ref(false);
 
 const toggle = () => {
     open.value = !open.value;
@@ -19,21 +19,44 @@ defineExpose({
         <!--Sidebar with Dimmer -->
         <div class="flex" :class="{ 'z-40 fixed inset-0': open }">
             <!-- Sidebar -->
-            <div
-                class="absolute top-0 z-20 flex h-screen"
-                :class="[
-                    right ? 'right-0 flex-row' : 'left-0 flex-row-reverse',
-                ]"
-            >
+            <div class="absolute top-0 right-0 z-20 flex flex-row h-screen">
                 <!-- Sidebar Content -->
                 <div
                     ref="content"
-                    class="flex items-center justify-center overflow-hidden overflow-y-auto transition-all duration-700 bg-black w-60"
+                    class="overflow-hidden overflow-y-auto transition-all duration-700 bg-black w-60"
                     :class="[open ? 'max-w-xl' : 'max-w-0']"
                 >
-                    <div class="w-48 text-xl font-bold text-center">
-                        Sidebar
+                    <div class="flex justify-end pt-6 pr-6">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            class="w-6 h-6 text-white cursor-pointer"
+                            @click="toggle"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18 18 6M6 6l12 12"
+                            />
+                        </svg>
                     </div>
+
+                    <nav class="mx-4 text-white">
+                        <ul>
+                            <li class="sidebar-item">
+                                <Link :href="route('user.index')">Users</Link>
+                            </li>
+
+                            <li class="sidebar-item">
+                                <Link :href="route('blacklisted-tasks.index')">
+                                    Blacklisted Task
+                                </Link>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
 

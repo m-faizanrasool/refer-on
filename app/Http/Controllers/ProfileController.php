@@ -44,16 +44,19 @@ class ProfileController extends Controller
             $user = $auth_user;
         }
 
-        $tasks = Task::with(['submitter','executor'])
-        ->where('executor_id', $user->id)
-        ->orWhere('submitter_id', $user->id)
+        $tasks = Task::with(['submitter', 'executor'])
+        ->where(function ($query) use ($user) {
+            $query->where('submitter_id', $user->id)
+                  ->orWhere('executor_id', $user->id);
+        })->where('status', '!=', 'available')
         ->get();
 
         $formattedTasks = $tasks->map(function ($task) {
             $task->submitter_name = $task->submitter->name;
-            $task->executor_name = $task->executor->name;
+            $task->executor_name =  $task->executor->name;
             $task->submitter_demerit_points = $task->status == "INVALID" ? $task->submitter->demerit_points + 1 : $task->submitter->demerit_points;
             $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
+            $task->can_dispute = ($task->fulfilled_at && Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15);
             return $task;
         });
 

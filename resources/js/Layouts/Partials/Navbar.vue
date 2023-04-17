@@ -32,64 +32,66 @@ import DropdownLink from "@/Components/DropdownLink.vue";
                 Login/Register
             </Link>
 
-            <Dropdown align="right" width="48" v-if="$page.props.auth.user">
-                <template #trigger>
-                    <button
-                        class="flex items-center transition duration-150 ease-in-out gap-x-1"
-                    >
-                        <span class="mt-2 text-lg font-bold">
-                            {{ $page.props.auth.user.name }}
-                        </span>
+            <div class="flex items-center gap-2">
+                <Dropdown align="right" width="48" v-if="$page.props.auth.user">
+                    <template #trigger>
+                        <button
+                            class="flex items-center transition duration-150 ease-in-out gap-x-1"
+                        >
+                            <span class="mt-2 text-lg font-bold">
+                                {{ $page.props.auth.user.name }}
+                            </span>
 
+                            <svg
+                                class="w-5 h-5 mt-1.5"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                        </button>
+                    </template>
+
+                    <template #content>
+                        <DropdownLink :href="route('profile.show')">
+                            My Account
+                        </DropdownLink>
+
+                        <DropdownLink
+                            :href="route('logout')"
+                            method="post"
+                            as="button"
+                        >
+                            Log Out
+                        </DropdownLink>
+                    </template>
+                </Dropdown>
+
+                <div class="flex items-center">
+                    <button
+                        @click="$emit('button-clicked')"
+                        class="p-1 mt-1.5 rounded hover:bg-gray-100 focus:bg-gray-100"
+                    >
                         <svg
-                            class="w-5 h-5 mt-1.5"
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
+                            class="w-6 h-6 transition-all duration-200 ease-in-out"
+                            stroke="currentColor"
+                            fill="none"
+                            viewBox="0 0 24 24"
                         >
                             <path
-                                fill-rule="evenodd"
-                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                clip-rule="evenodd"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"
                             />
                         </svg>
                     </button>
-                </template>
-
-                <template #content>
-                    <DropdownLink :href="route('profile.show')">
-                        My Account
-                    </DropdownLink>
-
-                    <DropdownLink
-                        :href="route('logout')"
-                        method="post"
-                        as="button"
-                    >
-                        Log Out
-                    </DropdownLink>
-                </template>
-            </Dropdown>
-
-            <div class="flex items-center md:hidden">
-                <button
-                    @click="$emit('button-clicked')"
-                    class="p-1 mt-1.5 rounded hover:bg-gray-100 focus:bg-gray-100"
-                >
-                    <svg
-                        class="w-6 h-6 transition-all duration-200 ease-in-out"
-                        stroke="currentColor"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16"
-                        />
-                    </svg>
-                </button>
+                </div>
             </div>
         </div>
     </nav>

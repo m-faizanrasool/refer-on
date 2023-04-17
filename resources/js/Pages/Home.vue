@@ -4,14 +4,19 @@ import TextInput from "@/Components/TextInput.vue";
 import Carousel from "@/Components/Carousal.vue";
 
 import { ref, watch } from "vue";
-import { router, Head, Link } from "@inertiajs/vue3";
+import { router, Head, Link, usePage } from "@inertiajs/vue3";
 import { throttle } from "lodash";
 
 const search = ref("");
+const user = usePage().props.auth.user;
 
 watch(
     search,
     throttle(function (value) {
+        if (!user) {
+            router.get(route("login"));
+            return;
+        }
         router.get(
             route("home"),
             { search: value },
@@ -47,13 +52,8 @@ defineProps({
                 <TextInput
                     type="text"
                     class="block w-full mt-1"
-                    :placeholder="
-                        !$page.props.auth.user
-                            ? 'Please login first to search for brands or stores with tasks'
-                            : 'Search for brands or stores with tasks'
-                    "
+                    placeholder="Search for brands or stores with tasks"
                     v-model="search"
-                    :disabled="!$page.props.auth.user"
                 />
             </div>
 
@@ -72,7 +72,9 @@ defineProps({
                 </Link>
             </div>
 
-            <div v-if="!availableTasks.length && (search || quereyParam)">
+            <div
+                v-if="!availableTasks.length && (search || quereyParam) && user"
+            >
                 <div class="flex flex-col items-center mt-10">
                     <h1 class="mb-2 text-2xl font-bold text-center">
                         Currently, there is no task for

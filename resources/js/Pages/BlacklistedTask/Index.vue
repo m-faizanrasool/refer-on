@@ -36,10 +36,17 @@ defineProps({
                         <div class="text-xl truncate">{{ task.key }}</div>
                     </div>
 
-                    <div class="lg:w-[260px]">
+                    <div class="lg:w-[130px]">
                         <div class="font-bold">Brand</div>
                         <div class="text-xl truncate">
                             {{ task.brand.name }}
+                        </div>
+                    </div>
+
+                    <div class="lg:w-[130px]">
+                        <div class="font-bold">Country</div>
+                        <div class="text-xl truncate">
+                            {{ task.country.name }}
                         </div>
                     </div>
                 </div>

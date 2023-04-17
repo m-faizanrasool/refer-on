@@ -13,7 +13,7 @@ class BlacklistedTaskController extends Controller
 {
     public function index()
     {
-        $blacklistedTask = BlacklistedTasks::with('brand')->get();
+        $blacklistedTask = BlacklistedTasks::with(['brand', 'country'])->get();
 
         return Inertia::render('BlacklistedTask/Index', [
             'blacklistedTask' => $blacklistedTask,
@@ -68,8 +68,11 @@ class BlacklistedTaskController extends Controller
     {
         $blacklistedTask = BlacklistedTasks::with('brand')->find($id);
 
+        $countries = Country::all();
+
         return Inertia::render('BlacklistedTask/Edit', [
             'blacklistedTask' => $blacklistedTask,
+            'countries' => $countries,
         ]);
     }
 
@@ -98,7 +101,7 @@ class BlacklistedTaskController extends Controller
         $blacklistedTask = BlacklistedTasks::find($id);
 
         $blacklistedTask->update([
-            'key' => $request->task,
+            'key' => $request->key,
             'brand_id' => $brand->id,
             'country_id' => $request->country_id
         ]);

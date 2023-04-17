@@ -20,7 +20,9 @@ class Task extends Model
         'summary',
         'submitter_credits',
         'executor_credits',
+        'fulfilled_at',
         'status',
+        'tags',
     ];
 
     protected $appends = [

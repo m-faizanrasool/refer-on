@@ -13,10 +13,13 @@ let blacklistedTask = computed(() => usePage().props.blacklistedTask);
 const form = useForm({
     key: blacklistedTask.value.key,
     brand: blacklistedTask.value.brand.name,
+    country_id: blacklistedTask.value.country_id,
 });
 
+const countries = computed(() => usePage().props.countries);
+
 const submit = () => {
-    form.post(route("blacklisted-tasks.update", blacklistedTask.value.id), {
+    form.patch(route("blacklisted-tasks.update", blacklistedTask.value.id), {
         onFinish: () => {},
     });
 };
@@ -58,6 +61,28 @@ const submit = () => {
                 />
 
                 <InputError class="mt-2" :message="form.errors.brand" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="country" value="Country" class="!font-bold" />
+
+                <select
+                    id="country"
+                    v-model="form.country_id"
+                    required
+                    class="w-full pl-4 mt-1 border-gray-300 shadow-xl rounded-3xl"
+                >
+                    <option value="" disabled>Select a country</option>
+                    <option
+                        v-for="country in countries"
+                        :key="country.id"
+                        :value="country.id"
+                    >
+                        {{ country.name }}
+                    </option>
+                </select>
+
+                <InputError class="mt-2" :message="form.errors.country_id" />
             </div>
 
             <div class="flex justify-end mt-4">

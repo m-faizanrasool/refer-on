@@ -20,4 +20,9 @@ class BlacklistedTasks extends Model
     {
         return $this->belongsTo(Brand::class);
     }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
 }

@@ -44,7 +44,7 @@ class HomeController extends Controller
 
         return Inertia::render('Home', [
             'availableTasks' => $availableTasks,
-            'quereyParam' => $query
+            'quereyParam' => $query,
         ]);
     }
 }

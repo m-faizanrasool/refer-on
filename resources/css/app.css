@@ -46,6 +46,10 @@
         @apply bg-[#575353];
     }
 
+    .sidebar-item {
+        @apply px-3 py-3 border-b border-neutral-600;
+    }
+
     .btn {
         @apply focus:outline-none text-[#575353] focus:ring-4 font-medium rounded-3xl text-sm px-5 py-2.5 shadow-xl border;
     }

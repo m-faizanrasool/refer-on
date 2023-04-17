@@ -13,7 +13,7 @@ class TaskService
 {
     public static function search($query, $country_id = null)
     {
-        if(!$country_id) {
+        if (!$country_id) {
             $country_id = Auth::user()->country_id;
         }
 
@@ -76,7 +76,7 @@ class TaskService
     {
         try {
             if (BlacklistedTasks::where('key', $task->key)->exists()) {
-                throw new HttpException(409, $task->key . " is in BlackList");
+                throw new HttpException(409, $task->key . " is BlackListed");
             }
 
             $executor = User::findOrFail($executor_id ?? Auth::id());
@@ -94,6 +94,5 @@ class TaskService
 
             throw $exception;
         }
-
     }
 }

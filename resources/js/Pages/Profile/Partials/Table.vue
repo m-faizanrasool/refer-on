@@ -2,6 +2,7 @@
 import TextInput from "@/Components/TextInput.vue";
 
 import { computed, ref } from "vue";
+import { router } from "@inertiajs/vue3";
 
 const props = defineProps({
     tasks: {
@@ -21,6 +22,8 @@ const props = defineProps({
 const search = ref("");
 const sortBy = ref("brand_name");
 const sortTasksDesc = ref(false);
+
+const select = ref();
 
 const tableHeaders = {
     country_name: "Country",
@@ -93,6 +96,32 @@ const Tasks = computed(() => {
     );
     return sortTasks(filteredTasks);
 });
+
+const statuses = [
+    { name: "VERIFED", value: "VERIFED", class: "text-green-400" },
+    { name: "INVALID", value: "INVALID", class: "text-red-400" },
+    { name: "DISPUTED", value: "DISPUTED", class: "text-yellow-400" },
+    {
+        name: "PENDING VERIFICATION",
+        value: "PENDING_VERIFICATION",
+        class: "text-yellow-400",
+    },
+];
+
+const updateTaskStatus = (value, curr, taskID) => {
+    if (value == curr.toLowerCase()) {
+        return;
+    }
+
+    if (confirm(`Are you sure you want to update the status to ${value}`)) {
+        router.patch(route("task.updateStatus"), {
+            task_id: taskID,
+            status: value,
+        });
+    } else {
+        select.value.value = curr;
+    }
+};
 </script>
 
 <template>
@@ -108,12 +137,13 @@ const Tasks = computed(() => {
     <div class="overflow-x-auto">
         <div class="flex table-head">
             <div
-                v-for="(name, value) in tableHeaders"
+                v-for="(name, key) in tableHeaders"
                 @click="
-                    sortBy = value;
+                    sortBy = key;
                     sortTasksDesc = !sortTasksDesc;
                 "
                 class="flex items-center gap-1 cursor-pointer"
+                :class="key === 'status' ? '!min-w-[200px]' : ''"
             >
                 <span v-text="name" class="mt-1"></span>
 
@@ -121,7 +151,7 @@ const Tasks = computed(() => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     class="w-4 h-4"
-                    v-if="sortBy === value"
+                    v-if="sortBy === key"
                     :class="
                         sortTasksDesc
                             ? 'transform rotate-180'
@@ -143,7 +173,32 @@ const Tasks = computed(() => {
             <div>{{ task.submitter_name }}</div>
             <div>{{ task.executor_name }}</div>
             <div>{{ task.executor_credits }}</div>
-            <div class="!text-[68%]">{{ task.status }}</div>
+            <div class="!text-[68%] !min-w-[200px]">
+                <select
+                    class="w-full p-0 text-[13px] bg-transparent border-none focus:ring-0"
+                    @change="
+                        updateTaskStatus(
+                            $event.target.value,
+                            task.status,
+                            task.id
+                        )
+                    "
+                    ref="select"
+                >
+                    <option
+                        v-for="status in statuses"
+                        :value="status.value"
+                        :class="status.class"
+                        :selected="
+                            status.value.toLowerCase() ==
+                            task.status.toLowerCase()
+                        "
+                        :key="status.value"
+                    >
+                        {{ status.name }}
+                    </option>
+                </select>
+            </div>
             <div>{{ task.submitter_demerit_points }}</div>
         </div>
     </div>
