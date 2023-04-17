@@ -33,8 +33,8 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $ip = '206.84.189.26'; //For local environment
-        // $ip = request()->ip(); //Dynamic IP address
+        // $ip = '206.84.189.26'; //For local environment
+        $ip = request()->ip(); //Dynamic IP address
         $country_code = Location::get($ip);
 
         $data = Country::where('code', $country_code->countryCode ?? "PK")->first();
