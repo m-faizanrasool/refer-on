@@ -39,8 +39,6 @@ class RegisteredUserController extends Controller
             'country_id' => ['required', 'numeric']
         ]);
 
-        $validatedData['password'] = Hash::make($validatedData['password']);
-
         $user = User::create($validatedData);
 
         event(new Registered($user));

@@ -10,7 +10,11 @@ import DropdownLink from "@/Components/DropdownLink.vue";
         <div class="flex items-center gap-2.5 md:gap-8">
             <div class="flex items-center gap-2">
                 <div class="border-2 shadow-xl avatar">
-                    <img class="fi-pk" />
+                    <img
+                        :class="`fi-${
+                            $page.props.country.data?.code.toLowerCase() ?? 'uk'
+                        }`"
+                    />
                 </div>
 
                 <div class="hidden text-lg md:block">
@@ -18,7 +22,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
                 </div>
             </div>
 
-            <Link class="mt-1.5 text-xl font-bold" href="/">REFERON </Link>
+            <Link class="text-xl font-bold" href="/">REFERON </Link>
         </div>
 
         <div class="flex items-center gap-2.5 md:gap-6">
@@ -38,12 +42,12 @@ import DropdownLink from "@/Components/DropdownLink.vue";
                         <button
                             class="flex items-center transition duration-150 ease-in-out gap-x-1"
                         >
-                            <span class="mt-2 text-lg font-bold">
+                            <span class="text-lg font-bold">
                                 {{ $page.props.auth.user.name }}
                             </span>
 
                             <svg
-                                class="w-5 h-5 mt-1.5"
+                                class="w-5 h-5 mt-0.5"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 20 20"
                                 fill="currentColor"
@@ -75,7 +79,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
                 <div class="flex items-center">
                     <button
                         @click="$emit('button-clicked')"
-                        class="p-1 mt-1.5 rounded hover:bg-gray-100 focus:bg-gray-100"
+                        class="rounded hover:bg-gray-100 focus:bg-gray-100"
                     >
                         <svg
                             class="w-6 h-6 transition-all duration-200 ease-in-out"

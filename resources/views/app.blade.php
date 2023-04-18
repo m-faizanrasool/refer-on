@@ -8,9 +8,6 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Font -->
-    <link href="{{ asset('fonts/Madefor.css') }}" rel="stylesheet">
-
     <!-- Scripts -->
     @routes
     @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])

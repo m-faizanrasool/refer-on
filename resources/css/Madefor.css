@@ -1,0 +1,29 @@
+@font-face {
+    font-family: "Madefor";
+    src: url(../../public/fonts/madefor/DisplayRegular.otf);
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "Madefor";
+    src: url(../../public/fonts/madefor/DisplayMedium.otf);
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: "Madefor";
+    src: url(../../public/fonts/madefor/DisplaySemibold.otf);
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: "Madefor";
+    src: url(../../public/fonts/madefor/DisplayBold.otf);
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: "Madefor";
+    src: url(../../public/fonts/madefor/DisplayExtraBold.otf);
+    font-weight: 900;
+}
