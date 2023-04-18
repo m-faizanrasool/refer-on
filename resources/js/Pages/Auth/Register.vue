@@ -1,6 +1,4 @@
 <script setup>
-import intlTelInput from "intl-tel-input";
-
 import AppLayout from "@/Layouts/AppLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -9,6 +7,7 @@ import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
 import { computed, onMounted, reactive, ref } from "vue";
 
 import { initializeApp } from "firebase/app";
+import intlTelInput from "intl-tel-input";
 
 import {
     getAuth,
