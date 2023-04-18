@@ -1,7 +1,6 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import TextInput from "@/Components/TextInput.vue";
-import Carousel from "@/Components/Carousal.vue";
 
 import { ref, watch } from "vue";
 import { router, Head, Link, usePage } from "@inertiajs/vue3";
@@ -11,30 +10,36 @@ const { throttle } = pkg;
 const search = ref("");
 const user = usePage().props.auth.user;
 
-watch(
-    search,
-    throttle(function (value) {
-        if (!user) {
-            router.get(route("login"));
-            return;
-        }
-        router.get(
-            route("home"),
-            { search: value },
-            {
-                preserveState: true,
-            }
-        );
-    }, 500)
-);
+// watch(
+//     search,
+//     throttle(function (value) {
+//         if (!user) {
+//             router.get(route("login"));
+//             return;
+//         }
+//         router.get(
+//             route("home"),
+//             { search: value },
+//             {
+//                 preserveState: true,
+//             }
+//         );
+//     }, 500)
+// );
 
-let logos = [
-    { src: "images/logos/adidas.png", alt: "adidas" },
-    { src: "images/logos/amazon.png", alt: "amazon" },
-    { src: "images/logos/ebay.png", alt: "ebay" },
-    { src: "images/logos/nike.png", alt: "nike" },
-    { src: "images/logos/shopee.png", alt: "shopee" },
-];
+const searchAvailableTasks = throttle(function () {
+    if (!user) {
+        router.get(route("login"));
+        return;
+    }
+    router.get(
+        route("home"),
+        { search: search.value },
+        {
+            preserveState: true,
+        }
+    );
+}, 500);
 
 defineProps({
     availableTasks: Array,
@@ -46,15 +51,16 @@ defineProps({
     <Head title="Home" />
 
     <AppLayout>
-        <div class="mx-auto md:w-4/6">
+        <div class="mx-auto md:w-3/5">
             <div class="mt-10">
                 <h1 class="font-bold text-center page-heading">REFERON</h1>
 
                 <TextInput
-                    type="text"
-                    class="block w-full mt-1"
-                    placeholder="Search for brands or stores with tasks"
+                    type="search"
+                    class="block w-full mt-1 text-center"
+                    placeholder="Search for brands or stores"
                     v-model="search"
+                    @keyup.enter="searchAvailableTasks"
                 />
             </div>
 
@@ -73,20 +79,18 @@ defineProps({
                 </Link>
             </div>
 
-            <div
-                v-if="!availableTasks.length && (search || quereyParam) && user"
-            >
-                <div class="flex flex-col items-center mt-10">
-                    <h1 class="mb-2 text-2xl font-bold text-center">
+            <div v-if="!availableTasks.length && user && quereyParam">
+                <div class="flex flex-col items-center mt-12">
+                    <h1 class="mb-2 text-3xl text-center">
                         Currently, there is no task for
-                        {{ search || quereyParam }}
+                        <span class="font-bold"> {{ quereyParam }}.</span>
                     </h1>
 
-                    <h2 class="mb-6">Check back here regularly, or</h2>
+                    <h2 class="mt-5 mb-4">Check back here regularly, or</h2>
 
                     <Link :href="route('task.create')">
                         <button class="btn btn-primary">
-                            Submit detail for new brand or store
+                            Submit details for a new brand or store
                         </button>
                     </Link>
                 </div>

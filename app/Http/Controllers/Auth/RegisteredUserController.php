@@ -9,35 +9,20 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): Response
     {
         return Inertia::render('Auth/Register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'phone' => ['required', 'unique:users','numeric'],
-            'country_id' => ['required', 'numeric']
-        ]);
+        $validatedData = $this->validateData($request);
 
         $user = User::create($validatedData);
 
@@ -48,14 +33,32 @@ class RegisteredUserController extends Controller
         return redirect(RouteServiceProvider::HOME);
     }
 
-    public function validateData(Request $request)
+    protected function validateData(Request $request): array
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:'.User::class,
+        return $request->validate(
+            $this->rules(),
+            $this->messages()
+        );
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone' => ['required', 'unique:users','numeric'],
             'country_id' => ['required', 'numeric']
-        ]);
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'name.unique' => 'Username is already registered.',
+            'phone.unique' => 'Mobile Number is already registered.',
+            'email.unique' => 'Email is already registered.',
+            'password.confirmed' => 'Passwords do not match.'
+        ];
     }
 }

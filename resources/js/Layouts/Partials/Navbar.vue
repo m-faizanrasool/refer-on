@@ -6,7 +6,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 </script>
 
 <template>
-    <nav class="flex items-center justify-between px-4 py-6 md:p-6">
+    <nav class="flex items-center justify-between px-4 py-6 font-bold md:p-6">
         <div class="flex items-center gap-2.5 md:gap-8">
             <div class="flex items-center gap-2">
                 <div class="border-2 shadow-xl avatar">
@@ -22,10 +22,12 @@ import DropdownLink from "@/Components/DropdownLink.vue";
                 </div>
             </div>
 
-            <Link class="text-xl font-bold" href="/">REFERON </Link>
+            <Link class="text-xl md:text-2xl text-spaced" href="/"
+                >REFERON
+            </Link>
         </div>
 
-        <div class="flex items-center gap-2.5 md:gap-6">
+        <div class="flex items-center gap-2.5 md:gap-8">
             <div class="hidden md:block">How it works</div>
 
             <Link
@@ -36,13 +38,13 @@ import DropdownLink from "@/Components/DropdownLink.vue";
                 Login/Register
             </Link>
 
-            <div class="flex items-center gap-2">
-                <Dropdown align="right" width="48" v-if="$page.props.auth.user">
+            <div class="flex items-center gap-2" v-if="$page.props.auth.user">
+                <Dropdown align="right" width="48">
                     <template #trigger>
                         <button
                             class="flex items-center transition duration-150 ease-in-out gap-x-1"
                         >
-                            <span class="text-lg font-bold">
+                            <span class="text-lg">
                                 {{ $page.props.auth.user.name }}
                             </span>
 

@@ -33,7 +33,7 @@ const submit = () => {
     <Head title="Create Task" />
 
     <AppLayout>
-        <h1 class="page-heading">Create task</h1>
+        <h1 class="page-heading">Create Task</h1>
 
         <div class="px-8 py-6 bg-gray-200 rounded-md">
             <div class="mx-auto space-y-4 sm:w-1/2">

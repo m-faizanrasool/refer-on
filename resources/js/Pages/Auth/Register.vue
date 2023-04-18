@@ -27,6 +27,7 @@ let country = computed(() => usePage().props.country.data);
 
 const phoneInput = ref();
 const message = ref("");
+const successMsg = ref("");
 const otp = ref();
 const showOtpblock = ref(false);
 const otpVerified = ref(false);
@@ -76,7 +77,7 @@ const sendOTP = () => {
         .then((confirmationResult) => {
             state.confirmationResult = confirmationResult;
 
-            message.value = "Message sent successfully.";
+            message.value = "Enter OTP sent to your Mobile Number";
             state.firebaseAppVerifier.clear();
             showOtpblock.value = true;
         })
@@ -91,9 +92,8 @@ const otpVerify = () => {
     state.confirmationResult
         .confirm(otp.value)
         .then((result) => {
-            // User signed in successfully.
-            const user = result.user;
-            message.value =
+            message.value = "";
+            successMsg.value =
                 "Otp verify success, Please click the register button.";
 
             otpVerified.value = true;
@@ -179,7 +179,7 @@ const submit = () => {
                 </div>
 
                 <div>
-                    <InputLabel for="name" value="Name*" />
+                    <InputLabel for="name" value="Username*" />
 
                     <TextInput
                         id="name"
@@ -193,23 +193,28 @@ const submit = () => {
                         autocomplete="name"
                     />
 
-                    <InputError class="mt-2" :message="form.errors.name" />
+                    <InputError class="mt-2 ml-3" :message="form.errors.name" />
                 </div>
 
                 <div>
-                    <InputLabel for="email" value="Phone Number*" />
+                    <InputLabel for="email" value="Mobile Number*" />
 
-                    <TextInput
-                        id="phone"
-                        type="text"
-                        class="block w-full mt-1"
-                        :disabled="form.wasSuccessful"
-                        v-model="form.phone"
-                        required
-                        autocomplete="phone"
+                    <div class="mt-1">
+                        <TextInput
+                            id="phone"
+                            type="text"
+                            class="block w-full"
+                            :disabled="form.wasSuccessful"
+                            v-model="form.phone"
+                            required
+                            autocomplete="phone"
+                        />
+                    </div>
+
+                    <InputError
+                        class="mt-2 ml-3"
+                        :message="form.errors.phone"
                     />
-
-                    <InputError class="mt-2" :message="form.errors.phone" />
                 </div>
 
                 <div>
@@ -226,7 +231,10 @@ const submit = () => {
                         autocomplete="username"
                     />
 
-                    <InputError class="mt-2" :message="form.errors.email" />
+                    <InputError
+                        class="mt-2 ml-3"
+                        :message="form.errors.email"
+                    />
                 </div>
 
                 <div>
@@ -243,7 +251,10 @@ const submit = () => {
                         autocomplete="new-password"
                     />
 
-                    <InputError class="mt-2" :message="form.errors.password" />
+                    <InputError
+                        class="mt-2 ml-3"
+                        :message="form.errors.password"
+                    />
                 </div>
 
                 <div>
@@ -264,7 +275,7 @@ const submit = () => {
                     />
 
                     <InputError
-                        class="mt-2"
+                        class="mt-2 ml-3"
                         :message="form.errors.password_confirmation"
                     />
                 </div>
@@ -275,7 +286,7 @@ const submit = () => {
                             class="w-full btn btn-primary"
                             @click="onSignInSubmit()"
                         >
-                            Request captcha and OTP
+                            Request CAPTCHA and OTP
                         </button>
 
                         <div
@@ -284,12 +295,18 @@ const submit = () => {
                         ></div>
                     </div>
 
-                    <div class="mt-4" v-if="showOtpblock">
+                    <div
+                        v-text="message"
+                        v-if="message"
+                        class="mb-3 ml-2 text-sm text-green-600"
+                    ></div>
+
+                    <div v-if="showOtpblock">
                         <form @submit.prevent="otpVerify()" class="flex gap-2">
                             <TextInput
                                 id="otp"
                                 type="number"
-                                class="block w-full mt-1"
+                                class="block w-full"
                                 placeholder="OTP"
                                 v-model="otp"
                                 required
@@ -297,16 +314,20 @@ const submit = () => {
                             />
 
                             <button class="w-full btn btn-primary">
-                                Verify Otp
+                                Verify OTP
                             </button>
                         </form>
                     </div>
 
                     <div
-                        v-text="message"
-                        class="mt-3 ml-2 text-green-600"
+                        v-text="successMsg"
+                        class="my-3 ml-2 text-sm text-green-600"
                     ></div>
                 </div>
+            </div>
+
+            <div class="text-sm text-right">
+                By registering, I agree to REFERON’s Terms of Use
             </div>
 
             <div class="flex items-center justify-end mt-4">

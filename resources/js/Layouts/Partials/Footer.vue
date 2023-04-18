@@ -11,7 +11,7 @@ import { Link } from "@inertiajs/vue3";
         </div>
 
         <div
-            class="flex flex-col gap-3 mb-2 text-center sm:flex-row md:gap-6 md:mb-0"
+            class="flex flex-col gap-3 mb-2 text-center sm:flex-row md:gap-8 md:mb-0"
         >
             <h6>About us</h6>
             <h6>Terms and conditions</h6>
