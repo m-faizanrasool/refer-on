@@ -22,7 +22,7 @@ class RegisteredUserController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $validatedData = $this->validateData($request);
+        $validatedData = $this->getValidatedData($request);
 
         $user = User::create($validatedData);
 
@@ -33,9 +33,17 @@ class RegisteredUserController extends Controller
         return redirect(RouteServiceProvider::HOME);
     }
 
-    protected function validateData(Request $request): array
+    protected function getValidatedData(Request $request): array
     {
         return $request->validate(
+            $this->rules(),
+            $this->messages()
+        );
+    }
+
+    public function validateData(Request $request)
+    {
+        $request->validate(
             $this->rules(),
             $this->messages()
         );
