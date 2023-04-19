@@ -78,12 +78,16 @@ defineProps({
             </div>
         </div>
 
-        <div class="flex items-center mt-6">
-            <Link
-                class="mx-auto btn btn-primary"
-                :href="route('profile.detail')"
-                >Details</Link
-            >
+        <div class="flex justify-center mt-8">
+            <div class="space-x-3">
+                <Link class="btn btn-primary" :href="route('profile.detail')"
+                    >Details</Link
+                >
+
+                <Link class="btn btn-success" :href="route('profile.edit')"
+                    >Edit</Link
+                >
+            </div>
         </div>
     </AppLayout>
 </template>
