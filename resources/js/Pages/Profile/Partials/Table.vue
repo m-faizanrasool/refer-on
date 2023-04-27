@@ -30,6 +30,7 @@ const tableHeaders = {
     formatted_created_at: "Date",
     brand_name: "Brand",
     submitter_name: "Submitter",
+    key: "task",
     executor_name: "Executor",
     submitter_credits: "Earnings",
     status: "Status",
@@ -44,10 +45,14 @@ const filterTasks = (searchValue, userId) => {
             task.country_name,
             task.formatted_created_at,
             task.brand_name,
-            task.submitter.name,
-            task.executor.name,
+            task.submitter.username,
+            task.key,
             task.status,
         ];
+
+        if (task.executor) {
+            fieldsToSearch.push(task.executor.username);
+        }
 
         let taskUserId;
 
@@ -98,6 +103,7 @@ const Tasks = computed(() => {
 });
 
 const statuses = [
+    { name: "AVAILABLE", value: "AVAILABLE", class: "text-blue-400" },
     { name: "VERIFED", value: "VERIFED", class: "text-green-400" },
     { name: "INVALID", value: "INVALID", class: "text-red-400" },
     { name: "DISPUTED", value: "DISPUTED", class: "text-yellow-400" },
@@ -171,11 +177,12 @@ const updateTaskStatus = (value, curr, taskID) => {
             <div>{{ task.formatted_created_at }}</div>
             <div>{{ task.brand_name }}</div>
             <div>{{ task.submitter_name }}</div>
+            <div>{{ task.key }}</div>
             <div>{{ task.executor_name }}</div>
             <div>{{ task.executor_credits }}</div>
-            <div class="!text-[68%] !min-w-[200px]">
+            <div class="!min-w-[200px]">
                 <select
-                    class="w-full p-0 text-[13px] bg-transparent border-none focus:ring-0"
+                    class="w-full p-0 text-xs bg-transparent border-none focus:ring-0"
                     @change="
                         updateTaskStatus(
                             $event.target.value,

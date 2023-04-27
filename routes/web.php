@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('task/fulfill/{task_id}', [TaskController::class, 'fulfill'])->name('task.fulfill');
+    Route::post('task/invalid', [TaskController::class, 'invalid'])->name('task.invalid');
     Route::post('task/complete', [TaskController::class, 'complete'])->name('task.complete');
     Route::get('task/created/{task_id}', [TaskController::class, 'created'])->name('task.created');
     Route::patch('task', [TaskController::class, 'updateStatus'])->name('task.updateStatus');

@@ -48,12 +48,11 @@ class ProfileController extends Controller
         ->where(function ($query) use ($user) {
             $query->where('submitter_id', $user->id)
                   ->orWhere('executor_id', $user->id);
-        })->where('status', '!=', 'available')
-        ->get();
+        })->get();
 
         $formattedTasks = $tasks->map(function ($task) {
-            $task->submitter_name = $task->submitter->name;
-            $task->executor_name =  $task->executor->name;
+            $task->submitter_name = $task->submitter->username;
+            $task->executor_name =  $task->executor ? $task->executor->username : "";
             $task->submitter_demerit_points = $task->status == "INVALID" ? $task->submitter->demerit_points + 1 : $task->submitter->demerit_points;
             $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
             $task->can_dispute = ($task->fulfilled_at && Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15);
@@ -63,8 +62,8 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Detail', [
             'fulfilledTaskCount' => $tasks->where('executor_id', $user->id)->count(),
             'fulfilledTasksEarnings' => $tasks->where('executor_id', $user->id)->sum('executor_credits'),
-            'tasksFulfilledByOthersCount' => $tasks->where('submitter_id', $user->id)->count(),
-            'tasksFulfilledByOthersEarnings' => $tasks->where('submitter_id', $user->id)->sum('submitter_credits'),
+            'tasksFulfilledByOthersCount' => $tasks->where('submitter_id', $user->id)->whereNotNull('executor_id')->count(),
+            'tasksFulfilledByOthersEarnings' => $tasks->where('submitter_id', $user->id)->whereNotNull('executor_id')->sum('submitter_credits'),
             'tasks' => $formattedTasks,
         ]);
     }

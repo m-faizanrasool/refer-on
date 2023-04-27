@@ -15,9 +15,9 @@ return new class extends Migration {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->boolean('is_admin')->default(false);
-            $table->string('name');
-            $table->string('email')->unique()->index();
-            $table->string('phone')->unique()->index();
+            $table->string('username')->index();
+            $table->string('email')->index();
+            $table->string('phone')->index();
             $table->unsignedSmallInteger('country_id')->index()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

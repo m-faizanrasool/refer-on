@@ -12,7 +12,7 @@ class UserController extends Controller
     {
         $user =
             User::orderByDesc('id')->when($request->search, function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
+                $query->where('username', 'like', "%{$search}%")
                 ->orWhere('email', 'like', "%{$search}%")
                  ->orWhere('phone', 'like', "%{$search}%");
             })->paginate(10);

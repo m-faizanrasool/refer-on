@@ -2,7 +2,7 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import TextInput from "@/Components/TextInput.vue";
 
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { router, Head, Link, usePage } from "@inertiajs/vue3";
 import pkg from "lodash";
 const { throttle } = pkg;
@@ -10,28 +10,12 @@ const { throttle } = pkg;
 const search = ref("");
 const user = usePage().props.auth.user;
 
-// watch(
-//     search,
-//     throttle(function (value) {
-//         if (!user) {
-//             router.get(route("login"));
-//             return;
-//         }
-//         router.get(
-//             route("home"),
-//             { search: value },
-//             {
-//                 preserveState: true,
-//             }
-//         );
-//     }, 500)
-// );
-
 const searchAvailableTasks = throttle(function () {
     if (!user) {
         router.get(route("login"));
         return;
     }
+
     router.get(
         route("home"),
         { search: search.value },

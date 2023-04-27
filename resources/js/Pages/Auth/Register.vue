@@ -138,7 +138,7 @@ const onSignInSubmit = () => {
 };
 
 let form = useForm({
-    name: "",
+    username: "",
     email: "",
     phone: "",
     password: "",
@@ -165,7 +165,7 @@ const submit = () => {
         <div class="mx-auto lg:w-3/5">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
                 <div>
-                    <InputLabel for="name" value="Country" />
+                    <InputLabel for="country" value="Country" />
 
                     <TextInput
                         id="country"
@@ -178,21 +178,24 @@ const submit = () => {
                 </div>
 
                 <div>
-                    <InputLabel for="name" value="Username*" />
+                    <InputLabel for="username" value="Username*" />
 
                     <TextInput
-                        id="name"
+                        id="username"
                         type="text"
                         class="block w-full mt-1"
-                        v-model="form.name"
+                        v-model="form.username"
                         placeholder="John Doe"
                         :disabled="form.wasSuccessful"
                         required
                         autofocus
-                        autocomplete="name"
+                        autocomplete="username"
                     />
 
-                    <InputError class="mt-2 ml-3" :message="form.errors.name" />
+                    <InputError
+                        class="mt-2 ml-3"
+                        :message="form.errors.username"
+                    />
                 </div>
 
                 <div>
@@ -227,7 +230,7 @@ const submit = () => {
                         :disabled="form.wasSuccessful"
                         v-model="form.email"
                         required
-                        autocomplete="username"
+                        autocomplete="email"
                     />
 
                     <InputError

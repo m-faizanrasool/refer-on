@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -30,7 +31,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return redirect(RouteServiceProvider::HOME)->with('message', 'Register Success, Welcome To Community');
     }
 
     protected function getValidatedData(Request $request): array
@@ -52,10 +53,10 @@ class RegisteredUserController extends Controller
     protected function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->whereNull('deleted_at'), 'regex:/^\S*$/'],
+            'email' => 'required|string|email|max:255|' . Rule::unique('users')->whereNull('deleted_at'),
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'phone' => ['required', 'unique:users','numeric'],
+            'phone' => ['required', Rule::unique('users')->whereNull('deleted_at'),'numeric'],
             'country_id' => ['required', 'numeric']
         ];
     }
@@ -63,7 +64,8 @@ class RegisteredUserController extends Controller
     protected function messages(): array
     {
         return [
-            'name.unique' => 'Username is already registered.',
+            'username.unique' => 'Username is already registered.',
+            'username.regex' => 'The username must not contain any spaces.',
             'phone.unique' => 'Mobile Number is already registered.',
             'email.unique' => 'Email is already registered.',
             'password.confirmed' => 'Passwords do not match.'

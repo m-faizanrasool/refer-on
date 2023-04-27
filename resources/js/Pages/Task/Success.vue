@@ -12,6 +12,8 @@ defineProps({
     <AppLayout>
         <Head title="Task" />
 
+        <h1 class="page-heading">Successful Post</h1>
+
         <div class="grid sm:grid-cols-2">
             <div class="px-8 py-6 bg-gray-200 rounded-md">
                 <div class="mb-4 text-2xl font-bold">
@@ -19,10 +21,11 @@ defineProps({
                 </div>
 
                 <div class="mb-4 text-lg font-bold">
-                    Your task has been posted. Check My Account for more detail
+                    Your code has been posted. Check My Account for more
+                    details.
                 </div>
 
-                <div class="mb-4 sm:px-4">
+                <div class="mb-8 sm:px-4">
                     <TextInput
                         id="country"
                         type="text"
@@ -43,12 +46,14 @@ defineProps({
                 </div>
             </div>
 
-            <div class="flex flex-col items-center justify-center p-8">
-                <img src="images/logos/amazon.png" alt="" />
+            <div class="flex flex-col p-8">
+                <div>
+                    <img src="images/logos/amazon.png" alt="" />
+                </div>
 
-                <div class="my-3">{{ task.website }}</div>
+                <div class="my-2 text-lg">{{ task.website }}</div>
 
-                <p>
+                <p class="text-xl">
                     {{ task.summary }}
                 </p>
             </div>

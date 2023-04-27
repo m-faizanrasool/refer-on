@@ -1,5 +1,6 @@
 @import "intl-tel-input/build/css/intlTelInput.css";
 @import "/node_modules/flag-icons/css/flag-icons.min.css";
+@import "toastify-js/src/toastify.css";
 @import "./Madefor.css";
 
 .iti {
@@ -40,6 +41,11 @@
     button:disabled {
         @apply pointer-events-none opacity-60;
     }
+
+    .toastify-error {
+        background: -webkit-linear-gradient(315deg, #fc3b3b, #ff0000);
+        background: linear-gradient(135deg, #fc3b3b, #ff0000);
+    }
 }
 
 @layer components {
@@ -60,7 +66,7 @@
     }
 
     .btn {
-        @apply focus:outline-none text-[#575353] focus:ring-4 font-medium rounded-3xl text-sm px-5 py-2.5 shadow-md border;
+        @apply focus:outline-none text-[#575353] focus:ring-0 font-medium rounded-3xl text-sm px-5 py-2.5 shadow-md border;
     }
 
     .btn-danger {
@@ -91,7 +97,7 @@
     }
 
     .table-head > div {
-        @apply px-2 py-4 text-sm font-bold leading-none text-black uppercase m-[1px] min-w-[150px] p-1;
+        @apply px-2 py-4 text-xs font-bold leading-none text-black uppercase m-[1px] min-w-[150px] p-1;
     }
 
     .table-head:nth-child(odd) > div {

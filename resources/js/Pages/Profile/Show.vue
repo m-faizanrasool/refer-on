@@ -23,12 +23,12 @@ defineProps({
                 <div
                     class="grid items-center font-bold gap-y-2 gap-x-4 md:grid-cols-2"
                 >
-                    Tasks that you fulfilled.
+                    Codes that you fulfilled
 
                     <TextInput
                         id="otp"
                         type="number"
-                        class="block text-center"
+                        class="block mx-6 text-center"
                         :value="fulfilledTasks"
                         readonly
                     />
@@ -37,11 +37,11 @@ defineProps({
                 <div
                     class="grid items-center font-bold gap-y-2 gap-x-4 md:grid-cols-2"
                 >
-                    Your earings
+                    Your earnings
 
                     <TextInput
                         type="text"
-                        class="block text-center"
+                        class="block mx-6 text-center"
                         :value="`$${fulfilledTasksEarnings}`"
                         readonly
                     />
@@ -52,11 +52,11 @@ defineProps({
                 <div
                     class="grid items-center font-bold gap-y-2 gap-x-4 md:grid-cols-2"
                 >
-                    Your tasks that other fulfilled.
+                    Your codes that other users fulfilled
 
                     <TextInput
                         type="number"
-                        class="block text-center"
+                        class="block mx-6 text-center"
                         :value="tasksFulfilledByOthers"
                         readonly
                     />
@@ -65,12 +65,12 @@ defineProps({
                 <div
                     class="grid items-center font-bold gap-y-2 gap-x-4 md:grid-cols-2"
                 >
-                    Your earings
+                    Your earnings
 
                     <TextInput
                         id="otp"
                         type="text"
-                        class="block text-center"
+                        class="block mx-6 text-center"
                         :value="`$${tasksFulfilledByOthersEarnings}`"
                         readonly
                     />
@@ -78,16 +78,20 @@ defineProps({
             </div>
         </div>
 
-        <div class="flex justify-center mt-8">
-            <div class="space-x-3">
-                <Link class="btn btn-primary" :href="route('profile.detail')"
-                    >Details</Link
-                >
+        <div class="flex flex-col justify-center gap-4 mt-8 md:flex-row">
+            <Link
+                class="block px-12 text-center btn btn-primary"
+                as="button"
+                :href="route('profile.detail')"
+                >Details</Link
+            >
 
-                <Link class="btn btn-success" :href="route('profile.edit')"
-                    >Edit</Link
-                >
-            </div>
+            <Link
+                class="block px-12 btn btn-success"
+                as="button"
+                :href="route('profile.edit')"
+                >Edit</Link
+            >
         </div>
     </AppLayout>
 </template>

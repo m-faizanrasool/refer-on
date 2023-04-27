@@ -18,15 +18,15 @@ defineProps({
     <Head title="Account" />
 
     <AppLayout>
-        <h1 class="page-heading">Account Detail</h1>
+        <h1 class="page-heading">Account Details</h1>
 
         <div>
             <div class="mb-8">
                 <div
                     class="flex flex-col justify-between mb-4 gap-y-3 md:items-center md:flex-row"
                 >
-                    <div class="flex items-center gap-2 font-bold">
-                        Tasks that you fulfilled:
+                    <div class="flex items-center gap-2 text-xl font-bold">
+                        Codes that you fulfilled:
 
                         <TextInput
                             type="text"
@@ -55,8 +55,8 @@ defineProps({
                 <div
                     class="flex flex-col justify-between mb-4 gap-y-3 md:items-center md:flex-row"
                 >
-                    <div class="flex items-center gap-2 font-bold">
-                        Your tasks that other fulfilled:
+                    <div class="flex items-center gap-2 text-xl font-bold">
+                        Your codes that other users fulfilled:
 
                         <TextInput
                             type="text"

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Task;
+use App\Providers\RouteServiceProvider;
 use App\Rules\BlacklistedTaskRule;
+use App\Services\TaskService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,14 +15,19 @@ use Inertia\Inertia;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function index(): \Inertia\Response
     {
-        return Inertia::render('Task/Success');
+        $tasks = Task::with('brand')
+            ->where('status', 'AVAILABLE')
+            ->latest()
+            ->paginate(10);
+
+        return inertia('Task/Index', compact('tasks'));
     }
 
     public function create()
     {
-        return Inertia::render('Task/Create');
+        return inertia('Task/Create');
     }
 
     public function store(Request $request)
@@ -28,7 +35,7 @@ class TaskController extends Controller
         $validatedData = $request->validate([
             'country_id' => ['required', 'numeric'],
             'brand' => ['required', 'string'],
-            'website' => ['required', 'string'],
+            'website' => ['required', 'string', 'url'],
             'submitter_credits' => ['required', 'numeric'],
             'executor_credits' => ['required', 'numeric'],
             'task' => ['required', 'string', new BlacklistedTaskRule, Rule::unique('tasks', 'key')],
@@ -39,14 +46,9 @@ class TaskController extends Controller
         ]);
 
         //create brand
-        $brand = Brand::where('name', $request->brand)->first();
-
-        if (!$brand) {
-            $brand = Brand::create(['name' => $request->brand]);
-        }
+        $brand = Brand::firstOrCreate(['name' => $request->brand]);
 
         try {
-            //create task
             $task = Task::create([
                 'key' => $validatedData['task'],
                 'brand_id' => $brand->id,
@@ -60,47 +62,70 @@ class TaskController extends Controller
 
             return redirect()->route('task.created', $task->id);
         } catch (\Throwable $th) {
-            return redirect()->back()->withErrors(['error' => 'Something went wrong. Please try again.']);
+            return redirect()->route('task.create')->with('error', $th->getMessage());
         }
     }
 
     public function show($id)
     {
-        $task = Task::with(['submitter', 'brand'])->find($id);
+        $task = Task::with(['submitter', 'brand'])->findOrFail($id);
 
-        return Inertia::render('Task/Show', [
-            'task' => $task,
-        ]);
+        return inertia('Task/Show', compact('task'));
     }
 
     public function fulfill($task_id)
     {
         $task = Task::with('brand')->findOrFail($task_id);
 
-        $task->update([
-            'executor_id' => Auth::id(),
-            'status' => 'PENDING_VERIFICATION',
-            'fulfilled_at' => Carbon::now()
+        if ($task->executor_id && $task->executor_id != Auth::id()) {
+            return redirect()->route('home')->with('error', 'Task already fulfilled');
+        }
+
+        if ($task->submitter_id == Auth::id()) {
+            return redirect()->route('home')->with('error', 'You cannot fulfill your own task');
+        }
+
+        try {
+            if (!$task->executor_id) {
+                TaskService::validate($task->id);
+
+                $task->update([
+                    'executor_id' => Auth::id(),
+                    'status' => 'PENDING_VERIFICATION',
+                    'fulfilled_at' => Carbon::now()
+                ]);
+            }
+
+            return inertia('Task/Fulfill', compact('task'));
+        } catch (\Throwable $th) {
+            return redirect()->route('home')->with('error', $th->getMessage());
+        }
+    }
+
+    public function invalid(Request $request)
+    {
+        $validatedData = $request->validate([
+            'task_id' => ['required', 'numeric'],
         ]);
 
-        return Inertia::render('Task/Fulfill', [
-            'task' => $task,
-        ]);
+        TaskService::reportInvalid($validatedData['task_id'], Auth::user()->id);
+
+        return redirect(RouteServiceProvider::HOME)->with('message', 'Task Reported Successfully');
     }
 
     public function complete(Request $request)
     {
         $validatedData = $request->validate([
-            'key' => ['required', 'string'],
+            'key' => ['required', 'string', Rule::unique('tasks')],
             'task_id' => ['required', 'numeric'],
         ]);
 
-        $parent_id = $validatedData['task_id'];
-        $task = Task::findOrFail($parent_id);
+        $task = Task::findOrFail($validatedData['task_id']);
 
         try {
+            TaskService::validate($validatedData['task_id'], $validatedData['key']);
+
             $newTask = Task::create([
-                'parent_id' => $parent_id, // to access the parent_id in Model's booted methods (being unset there)
                 'key' => $validatedData['key'],
                 'brand_id' => $task->brand_id,
                 'country_id' => $task->country_id,
@@ -112,8 +137,8 @@ class TaskController extends Controller
             ]);
 
             return redirect()->route('task.created', $newTask->id);
-        } catch (\Throwable $th) {
-            return redirect()->route('home');
+        } catch (\Throwable $e) {
+            return redirect()->route('home')->with('error', $e->getMessage());
         }
     }
 
@@ -137,7 +162,7 @@ class TaskController extends Controller
 
         if ($validatedData['status'] == 'DISPUTED') {
             if ($task->fulfilled_at && !Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15) {
-                return redirect()->route('profile.detail');
+                return redirect()->route('profile.detail')->with('error', 'Task status cannot be disputed until it has been open for at least 15 days.');
             }
         }
 
@@ -148,16 +173,53 @@ class TaskController extends Controller
 
     public function edit($id)
     {
-        //
+        $task = Task::with('brand')->find($id);
+
+        return Inertia::render('Task/Edit', [
+             'task' => $task,
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'country_id' => ['required', 'numeric'],
+            'brand' => ['required', 'string'],
+            'website' => ['required', 'string', 'url'],
+            'submitter_credits' => ['required', 'numeric'],
+            'executor_credits' => ['required', 'numeric'],
+            'task' => ['required', 'string', new BlacklistedTaskRule, Rule::unique('tasks', 'key')->ignore($id)],
+            'summary' => ['required', 'string'],
+        ], [
+            'task.unique' => 'The :attribute already exists.'
+        ]);
+
+        $brand = Brand::where('name', $request->brand)->first();
+
+        if (!$brand) {
+            $brand = Brand::create(['name' => $request->brand]);
+        }
+
+        $task = Task::findOrFail($id);
+
+        $task->update([
+            'key' => $validatedData['task'],
+            'brand_id' => $brand->id,
+            'country_id' => $validatedData['country_id'],
+            'submitter_id' => Auth::id(),
+            'website' => $validatedData['website'],
+            'summary' => $validatedData['summary'],
+            'submitter_credits' => $validatedData['submitter_credits'],
+            'executor_credits' => $validatedData['executor_credits'],
+        ]);
+
+        return redirect()->route('task.index');
     }
 
     public function destroy($id)
     {
-        //
+        $blacklistedTask = Task::findOrFail($id);
+
+        $blacklistedTask->delete();
     }
 }

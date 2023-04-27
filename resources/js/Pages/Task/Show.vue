@@ -1,10 +1,15 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { Head, Link, router } from "@inertiajs/vue3";
 
-const taskKey = ref(null);
+const reportInvalid = (task_id) => {
+    if (!confirm("Are you sure?")) return;
+
+    router.post(route("task.invalid"), {
+        task_id: task_id,
+    });
+};
 
 defineProps({
     task: Object,
@@ -22,7 +27,7 @@ defineProps({
                 </div>
 
                 <div class="mb-4 text-lg font-bold">
-                    {{ task.submitter.name }} will get ${{
+                    {{ task.submitter.username }} will get ${{
                         task.submitter_credits
                     }}
                 </div>
@@ -33,7 +38,6 @@ defineProps({
                         type="text"
                         class="block w-full mt-1 font-bold text-center !rounded-xl"
                         readonly
-                        ref="taskKey"
                         :value="task.key"
                         v-on:focus="$event.target.select()"
                     />
@@ -51,7 +55,10 @@ defineProps({
                         Proceed to fullfill
                     </Link>
 
-                    <button class="w-full font-bold border border-black btn">
+                    <button
+                        class="w-full font-bold border border-black btn"
+                        @click="reportInvalid(task.id)"
+                    >
                         Report invalid task
                     </button>
                 </div>

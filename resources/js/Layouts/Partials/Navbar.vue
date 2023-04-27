@@ -45,7 +45,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
                             class="flex items-center transition duration-150 ease-in-out gap-x-1"
                         >
                             <span class="text-lg">
-                                {{ $page.props.auth.user.name }}
+                                Hello, {{ $page.props.auth.user.username }}
                             </span>
 
                             <svg

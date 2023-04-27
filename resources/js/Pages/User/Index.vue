@@ -57,7 +57,9 @@ defineProps({
                 >
                     <div class="max-w-[120px]">
                         <div class="font-bold">Name</div>
-                        <div class="text-[20px] truncate">{{ user.name }}</div>
+                        <div class="text-[20px] truncate">
+                            {{ user.username }}
+                        </div>
                     </div>
 
                     <div class="max-w-[250px]">
