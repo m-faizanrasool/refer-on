@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         $this->attributes['password'] = Hash::make($value);
     }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
 }

@@ -79,12 +79,17 @@ class TaskService
                 throw new HttpException(409, $task->key . " is BlackListed");
             }
 
-            $executor = User::findOrFail($executor_id ?? Auth::id());
+            $user = User::findOrFail($executor_id ?? Auth::id());
 
-            $task_already_completed = Task::where(["executor_id" => $executor->id, "country_id" => $executor->country_id, "brand_id" => $task->brand_id])->exists();
+            $task_exists = Task::where(["country_id" => $user->country_id, "brand_id" => $task->brand_id])
+            ->where(function ($q) use ($user) {
+                $q->where('executor_id', $user->id)
+                    ->orWhere('submitter_id', $user->id);
+            })
+            ->exists();
 
-            if ($task_already_completed) {
-                throw new HttpException(409, "You already completed a task for this brand and country");
+            if ($task_exists) {
+                throw new HttpException(409, "You already have a task for " . $user->country->name . " - " . $task->brand->name);
             }
         } catch (HttpException $exception) {
             if (!empty($task->parent_id)) {
