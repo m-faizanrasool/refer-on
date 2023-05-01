@@ -27,12 +27,12 @@ import DropdownLink from "@/Components/DropdownLink.vue";
             </Link>
         </div>
 
-        <div class="flex items-center gap-2.5 md:gap-8">
+        <div class="flex items-center gap-6 md:gap-8">
             <div class="hidden md:block">How it works</div>
 
             <Link
                 :href="route('login')"
-                class="btn"
+                class="font-bold btn"
                 v-if="!$page.props.auth.user"
             >
                 Login/Register

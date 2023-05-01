@@ -38,20 +38,25 @@ defineProps({
                 </div>
 
                 <div class="mb-4 text-lg font-bold">
-                    You will get ${{ task.submitter_credits }}
+                    You will get ${{ task.submitter_credits }}.
                 </div>
 
                 <div class="text-lg font-bold">
-                    Next user will get ${{ task.executor_credits }}
+                    Next user will get ${{ task.executor_credits }}.
                 </div>
             </div>
 
-            <div class="flex flex-col p-8">
+            <div class="flex flex-col items-center p-8">
                 <div>
-                    <img src="images/logos/amazon.png" alt="" />
+                    <img src="images/logo_default.svg" alt="" />
                 </div>
 
-                <div class="my-2 text-lg">{{ task.website }}</div>
+                <a
+                    class="my-2 text-xl hover:underline"
+                    :href="task.website"
+                    target="_blank"
+                    >{{ task.website }}</a
+                >
 
                 <p class="text-xl">
                     {{ task.summary }}

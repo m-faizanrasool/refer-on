@@ -28,6 +28,7 @@ class Task extends Model
     protected $appends = [
         'brand_name',
         'country_name',
+        'executor_name',
     ];
 
     public function getBrandNameAttribute()
@@ -38,6 +39,11 @@ class Task extends Model
     public function getCountryNameAttribute()
     {
         return $this->country->name;
+    }
+
+    public function getExecutorNameAttribute()
+    {
+        return $this->executor ? $this->executor->username : "";
     }
 
     public function submitter()

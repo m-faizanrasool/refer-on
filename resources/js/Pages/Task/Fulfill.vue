@@ -43,14 +43,14 @@ const complete = () => {
                 </div>
 
                 <div class="mb-4 text-lg font-bold">
-                    Thank you for completing the job.
+                    Thank you for using the code.
                 </div>
 
                 <div class="mb-4 md:px-4">
                     <TextInput
                         id="country"
                         type="text"
-                        class="block w-full mt-1 font-bold text-center"
+                        class="block w-full mt-1 font-bold text-center !rounded-xl"
                         readonly
                         ref="taskKey"
                         :value="task.key"
@@ -59,27 +59,27 @@ const complete = () => {
                 </div>
 
                 <div class="mb-4 text-lg font-bold">
-                    You got ${{ task.executor_credits }}
+                    You got ${{ task.executor_credits }}.
                 </div>
 
                 <div class="mb-4 text-lg font-bold">
-                    Please key in your task.
+                    Please key in your new referral code. We'll share it with
+                    the next user.
                 </div>
 
                 <div class="mb-4 md:px-4">
                     <TextInput
                         id="country"
                         type="text"
-                        class="block w-full mt-1 font-bold"
-                        placeholder="task_78767"
+                        class="block w-full mt-1 font-bold !rounded-xl"
                         v-model="form.key"
                     />
 
                     <InputError class="mt-2" :message="form.errors.key" />
                 </div>
 
-                <div class="my-4 md:px-4">
-                    <button class="w-full btn btn-primary" @click="complete">
+                <div class="flex justify-end my-4 md:px-4">
+                    <button class="btn btn-primary" @click="complete">
                         Proceed to post
                     </button>
                 </div>

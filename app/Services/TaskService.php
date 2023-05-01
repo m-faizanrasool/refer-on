@@ -65,7 +65,7 @@ class TaskService
 
         if ($submitter->demerit_points % 3 == 0) {
             $submitter->status = "BLOCKED";
-            $submitter->blocked_until = Carbon::now();
+            $submitter->blocked_until = Carbon::now()->addDays(90);
         }
 
         $submitter->save();
@@ -81,14 +81,17 @@ class TaskService
         try {
             $task = Task::findOrFail($task_id);
 
-            // Check if the user has already submitted a task for this brand and country
-            $duplicateTask = Task::where('country_id', $task->country_id)
+            // Get count of tasks for this brand and country submitted or executed by the authenticated user
+            $count = Task::where('country_id', $task->country_id)
                 ->where('brand_id', $task->brand_id)
-                ->where('submitter_id', Auth::id())
-                ->exists();
+                ->where(function ($query) {
+                    $query->where('submitter_id', Auth::id())
+                          ->orWhere('executor_id', Auth::id());
+                })
+                ->count();
 
-            if ($duplicateTask) {
-                throw new \Exception('You have already submitted a task for this brand and country');
+            if ($count > 1) {
+                throw new \Exception('You can only submit or complete one task for '.$task->brand->name.' in '.$task->country->name.'.');
             }
 
             if ($key) {
@@ -99,6 +102,28 @@ class TaskService
                     ->exists();
 
                 if ($blacklistedTask) {
+                    $failedTask = Task::create([
+                        'key' => $key,
+                        'brand_id' => $task->brand_id,
+                        'country_id' => $task->country_id,
+                        'submitter_id' => Auth::id(),
+                        'website' => $task->website,
+                        'summary' => $task->summary,
+                        'submitter_credits' => 0,
+                        'executor_credits' => 0,
+                        'status' => 'INVALID',
+                    ]);
+
+                    $submitter = $failedTask->submitter;
+                    $submitter->demerit_points += 1;
+
+                    if ($submitter->demerit_points % 3 == 0) {
+                        $submitter->status = "BLOCKED";
+                        $submitter->blocked_until = Carbon::now()->addDays(90);
+                    }
+
+                    $submitter->save();
+
                     throw new \Exception('This task is blacklisted and cannot be submitted');
                 }
             }

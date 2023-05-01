@@ -31,7 +31,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME)->with('message', 'Register Success, Welcome To Community');
+        return redirect(RouteServiceProvider::HOME)->with('message', 'Successful registration. Welcome to the Community!');
     }
 
     protected function getValidatedData(Request $request): array

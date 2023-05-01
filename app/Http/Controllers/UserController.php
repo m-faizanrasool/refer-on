@@ -25,33 +25,13 @@ class UserController extends Controller
         );
     }
 
-    public function create()
+    public function block($user_id)
     {
-        //
-    }
+        $user = User::findOrFail($user_id);
 
-    public function store(Request $request)
-    {
-        //
-    }
+        $user->status = "PERMANENTLY_BLOCKED";
+        $user->save();
 
-    public function show($id)
-    {
-        //
-    }
-
-    public function edit($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    public function destroy($id)
-    {
-        //
+        return redirect()->route('user.index')->with('message', 'Successfully blocked user');
     }
 }

@@ -16,7 +16,16 @@ defineProps({
     <Head title="Account" />
 
     <AppLayout>
-        <h1 class="page-heading">Account Overview</h1>
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="m-0 page-heading">Account Overview</h1>
+
+            <Link
+                class="block px-14 btn btn-success"
+                as="button"
+                :href="route('profile.edit')"
+                >Edit Account</Link
+            >
+        </div>
 
         <div class="grid gap-8 sm:grid-cols-2">
             <div class="px-8 py-6 space-y-4 bg-gray-200 rounded-md">
@@ -28,7 +37,7 @@ defineProps({
                     <TextInput
                         id="otp"
                         type="number"
-                        class="block mx-6 text-center"
+                        class="block text-center lg:ml-24"
                         :value="fulfilledTasks"
                         readonly
                     />
@@ -41,7 +50,7 @@ defineProps({
 
                     <TextInput
                         type="text"
-                        class="block mx-6 text-center"
+                        class="block text-center lg:ml-24"
                         :value="`$${fulfilledTasksEarnings}`"
                         readonly
                     />
@@ -56,7 +65,7 @@ defineProps({
 
                     <TextInput
                         type="number"
-                        class="block mx-6 text-center"
+                        class="block text-center lg:ml-24"
                         :value="tasksFulfilledByOthers"
                         readonly
                     />
@@ -70,7 +79,7 @@ defineProps({
                     <TextInput
                         id="otp"
                         type="text"
-                        class="block mx-6 text-center"
+                        class="block text-center lg:ml-24"
                         :value="`$${tasksFulfilledByOthersEarnings}`"
                         readonly
                     />
@@ -78,20 +87,11 @@ defineProps({
             </div>
         </div>
 
-        <div class="flex flex-col justify-center gap-4 mt-8 md:flex-row">
-            <Link
-                class="block px-12 text-center btn btn-primary"
-                as="button"
-                :href="route('profile.detail')"
-                >Details</Link
-            >
-
-            <Link
-                class="block px-12 btn btn-success"
-                as="button"
-                :href="route('profile.edit')"
-                >Edit</Link
-            >
-        </div>
+        <Link
+            class="block mx-auto mt-8 text-center px-14 btn btn-primary"
+            as="button"
+            :href="route('profile.detail')"
+            >Details</Link
+        >
     </AppLayout>
 </template>

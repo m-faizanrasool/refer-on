@@ -84,15 +84,13 @@ defineProps({
                             Detail
                         </Link>
 
-                        <button
-                            @click="
-                                $inertia.delete(route('user.destroy', user.id))
-                            "
-                            class="text-red-500"
-                            onclick="return confirm('Are you sure?')"
+                        <Link
+                            class="text-white btn btn-danger"
+                            onclick="return confirm('Are you sure you want to permanently block the user?')"
+                            :href="route('user.block', user.id)"
                         >
-                            Delete
-                        </button>
+                            Block
+                        </Link>
                     </div>
                 </div>
             </div>

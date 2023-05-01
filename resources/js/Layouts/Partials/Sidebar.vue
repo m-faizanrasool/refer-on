@@ -47,14 +47,24 @@ defineExpose({
                     <nav class="mx-4 text-white">
                         <ul>
                             <li class="sidebar-item">
-                                <Link :href="route('user.index')">Users</Link>
+                                <Link :href="route('task.index')">Tasks</Link>
                             </li>
 
-                            <li class="sidebar-item">
-                                <Link :href="route('blacklisted-tasks.index')">
-                                    Blacklisted Task
-                                </Link>
-                            </li>
+                            <div v-if="$page.props.auth.user.is_admin">
+                                <li class="sidebar-item">
+                                    <Link :href="route('user.index')"
+                                        >Users (Admin)</Link
+                                    >
+                                </li>
+
+                                <li class="sidebar-item">
+                                    <Link
+                                        :href="route('blacklisted-tasks.index')"
+                                    >
+                                        Blacklisted Task (Admin)
+                                    </Link>
+                                </li>
+                            </div>
                         </ul>
                     </nav>
                 </div>

@@ -1,8 +1,11 @@
 <script setup>
 import TextInput from "@/Components/TextInput.vue";
+import CustomSelect from "@/Pages/Profile/Partials/Select.vue";
 
 import { computed, ref } from "vue";
 import { router } from "@inertiajs/vue3";
+
+import Toastify from "toastify-js";
 
 const props = defineProps({
     tasks: {
@@ -20,10 +23,8 @@ const props = defineProps({
 });
 
 const search = ref("");
-const sortBy = ref("brand_name");
-const sortTasksDesc = ref(false);
-
-const select = ref();
+const sortBy = ref("formatted_created_at");
+const sortTasksDesc = ref(true);
 
 const tableHeaders = {
     country_name: "Country",
@@ -34,7 +35,7 @@ const tableHeaders = {
     executor_name: "Executor",
     submitter_credits: "Earnings",
     status: "Status",
-    submitter_demerit_points: "Dermit Points",
+    submitter_demerit_points: "DEMERIT POINTS",
 };
 
 const filterTasks = (searchValue, userId) => {
@@ -102,30 +103,85 @@ const Tasks = computed(() => {
     return sortTasks(filteredTasks);
 });
 
-const statuses = [
-    { name: "AVAILABLE", value: "AVAILABLE", class: "text-blue-400" },
-    { name: "VERIFED", value: "VERIFED", class: "text-green-400" },
-    { name: "INVALID", value: "INVALID", class: "text-red-400" },
-    { name: "DISPUTED", value: "DISPUTED", class: "text-yellow-400" },
+const statusesExecutor = [
     {
-        name: "PENDING VERIFICATION",
+        label: "Pending execution",
+        value: "AVAILABLE",
+        class: "text-green-400",
+    },
+    {
+        label: "Pending your verification",
         value: "PENDING_VERIFICATION",
-        class: "text-yellow-400",
+        class: "text-blue-600",
+    },
+    { label: "Verified by you", value: "VERIFIED", class: "text-green-600" },
+    { label: "Disputed by you", value: "DISPUTED", class: "text-green-600" },
+    {
+        label: "Executor user claimed your task is invalid",
+        value: "INVALID",
+        class: "text-red-400",
     },
 ];
 
-const updateTaskStatus = (value, curr, taskID) => {
-    if (value == curr.toLowerCase()) {
-        return;
+const statusesSubmitter = [
+    {
+        label: "Hmm error",
+        value: "AVAILABLE",
+        class: "text-green-400",
+    },
+    {
+        label: "Pending Submitter verification",
+        value: "PENDING_VERIFICATION",
+        class: "text-blue-600",
+    },
+    {
+        label: "Verified by Submitter",
+        value: "VERIFIED",
+        class: "text-green-400",
+    },
+    {
+        label: "Disputed by Submitter",
+        value: "DISPUTED",
+        class: "text-green-400",
+    },
+    {
+        label: "You claimed task is invalid",
+        value: "INVALID",
+        class: "text-red-400",
+    },
+];
+
+const filterStatus = (status) => {
+    let filteredStatus = [];
+
+    if (status === "PENDING_VERIFICATION") {
+        filteredStatus = statusesExecutor.filter(
+            (option) =>
+                option.value === "VERIFIED" || option.value === "DISPUTED"
+        );
+    } else if (status === "VERIFIED") {
+        filteredStatus = statusesExecutor.filter(
+            (option) => option.value === "DISPUTED"
+        );
     }
 
-    if (confirm(`Are you sure you want to update the status to ${value}`)) {
+    return filteredStatus;
+};
+
+const updateTaskStatus = (status, task_id, canDispute) => {
+    if (canDispute) {
         router.patch(route("task.updateStatus"), {
-            task_id: taskID,
-            status: value,
+            task_id,
+            status,
         });
     } else {
-        select.value.value = curr;
+        Toastify({
+            text: "Task must be open for at least 15 days before it can be disputed.",
+            className: "toastify-error",
+            duration: 3000,
+            close: true,
+            stopOnFocus: true,
+        }).showToast();
     }
 };
 </script>
@@ -179,33 +235,73 @@ const updateTaskStatus = (value, curr, taskID) => {
             <div>{{ task.submitter_name }}</div>
             <div>{{ task.key }}</div>
             <div>{{ task.executor_name }}</div>
-            <div>{{ task.executor_credits }}</div>
-            <div class="!min-w-[200px]">
-                <select
-                    class="w-full p-0 text-xs bg-transparent border-none focus:ring-0"
-                    @change="
-                        updateTaskStatus(
-                            $event.target.value,
-                            task.status,
-                            task.id
-                        )
-                    "
-                    ref="select"
-                >
-                    <option
-                        v-for="status in statuses"
-                        :value="status.value"
-                        :class="status.class"
-                        :selected="
-                            status.value.toLowerCase() ==
-                            task.status.toLowerCase()
-                        "
-                        :key="status.value"
-                    >
-                        {{ status.name }}
-                    </option>
-                </select>
+            <div>
+                ${{
+                    taskType == "submitter"
+                        ? task.submitter_credits
+                        : task.executor_credits
+                }}
             </div>
+
+            <div class="!min-w-[200px]">
+                <div v-if="taskType === 'executor'">
+                    <span
+                        :class="
+                            statusesSubmitter.find(
+                                (status) => status.value === task.status
+                            ).class
+                        "
+                        >{{
+                            statusesSubmitter.find(
+                                (status) => status.value === task.status
+                            ).label
+                        }}</span
+                    >
+                </div>
+
+                <div v-if="taskType === 'submitter'">
+                    <template
+                        v-if="
+                            task.status === 'AVAILABLE' ||
+                            task.status === 'DISPUTED' ||
+                            task.status === 'INVALID'
+                        "
+                    >
+                        <span
+                            :class="
+                                statusesExecutor.find(
+                                    (status) => status.value === task.status
+                                ).class
+                            "
+                            >{{
+                                statusesExecutor.find(
+                                    (status) => status.value === task.status
+                                ).label
+                            }}</span
+                        >
+                    </template>
+
+                    <template v-else>
+                        <custom-select
+                            :options="filterStatus(task.status)"
+                            :selected-option="
+                                statusesExecutor.filter(
+                                    (option) => option.value === task.status
+                                )
+                            "
+                            @update:value="
+                                (newValue) =>
+                                    updateTaskStatus(
+                                        newValue,
+                                        task.id,
+                                        task.can_dispute
+                                    )
+                            "
+                        />
+                    </template>
+                </div>
+            </div>
+
             <div>{{ task.submitter_demerit_points }}</div>
         </div>
     </div>

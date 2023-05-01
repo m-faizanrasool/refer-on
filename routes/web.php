@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\IsAdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,10 +35,17 @@ Route::middleware('auth')->group(function () {
     Route::patch('task', [TaskController::class, 'updateStatus'])->name('task.updateStatus');
 
     Route::resources([
-        'user' => UserController::class,
         'task' => TaskController::class,
-        'blacklisted-tasks' => BlacklistedTaskController::class,
     ]);
+
+    Route::middleware([IsAdminMiddleware::class])->group(function () {
+        Route::get('user', [UserController::class, 'index'])->name('user.index');
+        Route::get('user/block/{user_id}', [UserController::class, 'block'])->name('user.block');
+
+        Route::resources([
+            'blacklisted-tasks' => BlacklistedTaskController::class,
+        ]);
+    });
 });
 
 require __DIR__.'/auth.php';

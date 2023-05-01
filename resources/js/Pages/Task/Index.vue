@@ -16,7 +16,17 @@ defineProps({
     <AppLayout>
         <Head title="My Task" />
 
-        <h1 class="page-heading">My Tasks</h1>
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="page-heading">My Tasks</h1>
+
+            <Link
+                class="block px-12 btn btn-primary"
+                as="button"
+                :href="route('profile.detail')"
+            >
+                Task Details
+            </Link>
+        </div>
 
         <div>
             <div
@@ -26,15 +36,33 @@ defineProps({
                 <div
                     class="flex flex-col gap-3 mb-4 lg:gap-12 lg:flex-row lg:mb-0"
                 >
-                    <div class="max-w-[120px]">
+                    <div class="max-w-[120px] min-w-[100px]">
+                        <div class="font-bold">Submitter</div>
+                        <div class="text-lg truncate">
+                            {{
+                                task.submitter_id === $page.props.auth.user.id
+                                    ? "You"
+                                    : task.executor_name
+                            }}
+                        </div>
+                    </div>
+
+                    <div class="max-w-[120px] min-w-[100px]">
                         <div class="font-bold">Code</div>
-                        <div class="text-[20px] truncate">{{ task.key }}</div>
+                        <div class="text-lg truncate">{{ task.key }}</div>
+                    </div>
+
+                    <div class="max-w-[220px] min-w-[220px]">
+                        <div class="font-bold">Status</div>
+                        <div class="text-lg truncate">
+                            {{ task.status }}
+                        </div>
                     </div>
 
                     <div class="max-w-[250px]">
                         <div class="font-bold">Brand</div>
-                        <div class="text-[20px] truncate">
-                            {{ task.brand.name }}
+                        <div class="text-lg truncate">
+                            {{ task.brand_name }}
                         </div>
                     </div>
                 </div>
@@ -44,8 +72,20 @@ defineProps({
                         <Link
                             class="btn btn-success"
                             :href="route('task.edit', task.id)"
+                            v-if="task.status === 'AVAILABLE'"
                         >
                             Edit
+                        </Link>
+
+                        <Link
+                            class="btn btn-primary"
+                            :href="route('task.fulfill', task.id)"
+                            v-if="
+                                task.status === 'PENDING_VERIFICATION' &&
+                                task.submitter_id !== $page.props.auth.user.id
+                            "
+                        >
+                            Fullfill
                         </Link>
 
                         <button
@@ -53,6 +93,11 @@ defineProps({
                                 $inertia.delete(route('task.destroy', task.id))
                             "
                             class="text-red-500"
+                            v-if="
+                                task.submitter_id ===
+                                    $page.props.auth.user.id &&
+                                task.status === 'AVAILABLE'
+                            "
                             onclick="return confirm('Are you sure?')"
                         >
                             Delete

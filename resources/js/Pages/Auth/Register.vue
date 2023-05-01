@@ -93,7 +93,7 @@ const otpVerify = () => {
         .then((result) => {
             message.value = "";
             successMsg.value =
-                "Otp verify success, Please click the register button.";
+                "OTP verified successfully. Proceed to Register.";
 
             otpVerified.value = true;
         })

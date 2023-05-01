@@ -2,9 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -41,15 +44,61 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('phone', 'password'), $this->boolean('remember'))) {
+        $user = $this->findUser();
+
+        $this->validateUserCredentials($user);
+
+        $this->handleBlockedUser($user);
+
+        Auth::login($user, $this->boolean('remember'));
+
+        RateLimiter::clear($this->throttleKey());
+    }
+
+    private function findUser(): User
+    {
+        return User::where('phone', $this->input('phone'))->first();
+    }
+
+    private function validateUserCredentials(?User $user): void
+    {
+        if (!$user || !Hash::check($this->input('password'), $user->password)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'phone' => trans('auth.failed'),
             ]);
         }
+    }
 
-        RateLimiter::clear($this->throttleKey());
+    private function handleBlockedUser(User $user): void
+    {
+        $status = $user->status;
+
+        if ($status === 'PERMANENTLY_BLOCKED') {
+            throw ValidationException::withMessages([
+                'phone' => trans('auth.permanently_blocked'),
+            ]);
+        }
+
+        if ($status === 'BLOCKED') {
+            $this->handleTemporaryBlockedUser($user);
+        }
+    }
+
+    private function handleTemporaryBlockedUser(User $user): void
+    {
+        $blockedUntil = Carbon::parse($user->blocked_until);
+
+        if ($blockedUntil->isFuture()) {
+            throw ValidationException::withMessages([
+                'phone' => trans('auth.blocked_until', ['date' => $blockedUntil->format('d-m-Y')]),
+            ]);
+        }
+
+        $user->status = 'ACTIVE';
+        $user->blocked_until = null;
+        $user->save();
     }
 
     /**

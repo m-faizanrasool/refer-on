@@ -191,9 +191,11 @@ const submit = () => {
                     />
                 </div>
 
-                <button class="w-full btn btn-primary" @click="submit">
-                    Proceed To Post
-                </button>
+                <div class="flex justify-end">
+                    <button class="btn btn-primary" @click="submit">
+                        Proceed To Post
+                    </button>
+                </div>
             </div>
         </div>
     </AppLayout>

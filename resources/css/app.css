@@ -66,7 +66,7 @@
     }
 
     .btn {
-        @apply focus:outline-none text-[#575353] focus:ring-0 font-medium rounded-3xl text-sm px-5 py-2.5 shadow-md border;
+        @apply focus:outline-none text-[#575353] focus:ring-0 font-medium rounded-3xl text-sm px-5 py-2.5 shadow-sm border;
     }
 
     .btn-danger {
@@ -97,7 +97,7 @@
     }
 
     .table-head > div {
-        @apply px-2 py-4 text-xs font-bold leading-none text-black uppercase m-[1px] min-w-[150px] p-1;
+        @apply px-2 py-4 text-xs font-medium leading-none text-black m-[1px] min-w-[150px] p-1;
     }
 
     .table-head:nth-child(odd) > div {
@@ -109,12 +109,24 @@
     }
 
     .text-spaced {
-        @apply tracking-wider;
+        @apply tracking-wider md:left-0;
     }
 }
 
 @layer utilities {
     .main-height {
         min-height: calc(100vh - 162px);
+    }
+
+    @media (max-width: 768px) {
+        .main-height {
+            min-height: calc(100vh - 186px);
+        }
+    }
+
+    @media (max-width: 640px) {
+        .main-height {
+            min-height: calc(100vh - 258px);
+        }
     }
 }

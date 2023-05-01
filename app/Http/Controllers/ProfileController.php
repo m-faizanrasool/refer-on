@@ -20,17 +20,20 @@ class ProfileController extends Controller
     {
         $user_id = Auth::user()->id;
 
-        $task = Task::where('status', 'VERIFIED')
-        ->where(function ($q) use ($user_id) {
+        $userTasks = Task::where(function ($q) use ($user_id) {
             $q->where('executor_id', $user_id)
                 ->orWhere('submitter_id', $user_id);
-        })->get();
+        })
+        ->where('status', '!=', 'INVALID')->get();
+
+        $fulfilledTasks = $userTasks->where('executor_id', $user_id);
+        $tasksFulfilledByOthers = $userTasks->where('submitter_id', $user_id)->whereNotNull('executor_id');
 
         return Inertia::render('Profile/Show', [
-            'fulfilledTasks' => $task->where('executor_id', $user_id)->count(),
-            'fulfilledTasksEarnings' => $task->sum('executor_credits'),
-            'tasksFulfilledByOthers' => $task->where('submitter_id', $user_id)->count(),
-            'tasksFulfilledByOthersEarnings' => $task->where('submitter_id', $user_id)->sum('submitter_credits'),
+            'fulfilledTasks' => $fulfilledTasks->count(),
+            'fulfilledTasksEarnings' => $fulfilledTasks->sum('executor_credits'),
+            'tasksFulfilledByOthers' => $tasksFulfilledByOthers->count(),
+            'tasksFulfilledByOthersEarnings' => $tasksFulfilledByOthers->sum('submitter_credits'),
         ]);
     }
 
@@ -53,7 +56,7 @@ class ProfileController extends Controller
         $formattedTasks = $tasks->map(function ($task) {
             $task->submitter_name = $task->submitter->username;
             $task->executor_name =  $task->executor ? $task->executor->username : "";
-            $task->submitter_demerit_points = $task->status == "INVALID" ? $task->submitter->demerit_points + 1 : $task->submitter->demerit_points;
+            $task->submitter_demerit_points = $task->status == "INVALID" ? 1 : "";
             $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
             $task->can_dispute = ($task->fulfilled_at && Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15);
             return $task;

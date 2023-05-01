@@ -13,6 +13,7 @@ const reportInvalid = (task_id) => {
 
 defineProps({
     task: Object,
+    alreadyExists: Boolean,
 });
 </script>
 
@@ -47,7 +48,7 @@ defineProps({
                     You will get ${{ task.executor_credits }}
                 </div>
 
-                <div class="mt-4 space-y-4 sm:mx-8">
+                <div class="mt-4 space-y-4 sm:mx-8" v-if="!alreadyExists">
                     <Link
                         class="block w-full text-center btn btn-primary"
                         :href="route('task.fulfill', task.id)"
@@ -61,6 +62,18 @@ defineProps({
                     >
                         Report invalid task
                     </button>
+                </div>
+
+                <div v-else class="mt-4 text-red-600">
+                    <div>
+                        Our records show that you have already submitted a code
+                        for {{ task.brand.name }}.
+                    </div>
+
+                    <div>
+                        Please note that you can only make one code submission
+                        per brand.
+                    </div>
                 </div>
             </div>
 

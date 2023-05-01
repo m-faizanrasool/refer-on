@@ -3,23 +3,24 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
-import { Head, useForm, usePage } from "@inertiajs/vue3";
-import { computed } from "vue";
+import { Head, useForm } from "@inertiajs/vue3";
 
-let task = computed(() => usePage().props.task);
+const props = defineProps({
+    task: Object,
+});
 
 const form = useForm({
-    country_id: task.value.country.id,
-    brand: task.value.brand.name,
-    website: task.value.website,
-    submitter_credits: task.value.submitter_credits,
-    executor_credits: task.value.executor_credits,
-    task: task.value.key,
-    summary: task.value.summary,
+    country_id: props.task.country.id,
+    brand: props.task.brand.name,
+    website: props.task.website,
+    submitter_credits: props.task.submitter_credits,
+    executor_credits: props.task.executor_credits,
+    task: props.task.key,
+    summary: props.task.summary,
 });
 
 const submit = () => {
-    form.post(route("task.update"), {
+    form.patch(route("task.update", props.task.id), {
         preserveScroll: true,
     });
 };

@@ -17,10 +17,12 @@ class TaskController extends Controller
 {
     public function index(): \Inertia\Response
     {
-        $tasks = Task::with('brand')
-            ->where('status', 'AVAILABLE')
-            ->latest()
-            ->paginate(10);
+        $tasks =   Task::where(function ($query) {
+            $query->where('submitter_id', Auth::id())
+                  ->orWhere('executor_id', Auth::id());
+        })
+        ->latest()
+        ->paginate(10);
 
         return inertia('Task/Index', compact('tasks'));
     }
@@ -30,12 +32,27 @@ class TaskController extends Controller
         return inertia('Task/Create');
     }
 
+    public function show($id)
+    {
+        $task = Task::with(['submitter', 'brand'])->findOrFail($id);
+
+        $alreadyExists = Task::where('country_id', $task->country_id)
+        ->where('brand_id', $task->brand_id)
+        ->where(function ($query) {
+            $query->where('submitter_id', Auth::id())
+                  ->orWhere('executor_id', Auth::id());
+        })
+        ->exists();
+
+        return inertia('Task/Show', compact('task', 'alreadyExists'));
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
             'country_id' => ['required', 'numeric'],
             'brand' => ['required', 'string'],
-            'website' => ['required', 'string', 'url'],
+            'website' => ['required', 'string'],
             'submitter_credits' => ['required', 'numeric'],
             'executor_credits' => ['required', 'numeric'],
             'task' => ['required', 'string', new BlacklistedTaskRule, Rule::unique('tasks', 'key')],
@@ -66,18 +83,11 @@ class TaskController extends Controller
         }
     }
 
-    public function show($id)
-    {
-        $task = Task::with(['submitter', 'brand'])->findOrFail($id);
-
-        return inertia('Task/Show', compact('task'));
-    }
-
     public function fulfill($task_id)
     {
         $task = Task::with('brand')->findOrFail($task_id);
 
-        if ($task->executor_id && $task->executor_id != Auth::id()) {
+        if ($task->executor_id && $task->executor_id !== Auth::id()) {
             return redirect()->route('home')->with('error', 'Task already fulfilled');
         }
 
@@ -151,29 +161,47 @@ class TaskController extends Controller
         ]);
     }
 
+
     public function updateStatus(Request $request)
     {
-        $validatedData = $request->validate([
-            'task_id' => ['required', 'numeric'],
-            'status' => ['required', 'string'],
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'status' => ['required', 'string'],
+                'task_id' => ['required', 'numeric'],
+            ]);
 
-        $task = Task::findOrFail($validatedData['task_id']);
+            $task = Task::findOrFail($validatedData['task_id']);
 
-        if ($validatedData['status'] == 'DISPUTED') {
-            if ($task->fulfilled_at && !Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15) {
-                return redirect()->route('profile.detail')->with('error', 'Task status cannot be disputed until it has been open for at least 15 days.');
-            }
+            $this->checkTaskStatus($task, $validatedData['status']);
+
+            $task->update([
+                'status' => $validatedData['status'],
+            ]);
+
+            return redirect()->route('profile.detail')->with('success', 'Task status updated successfully.');
+        } catch (\Throwable $e) {
+            return redirect()->route('profile.detail')->with('error', $e->getMessage());
         }
+    }
 
-        $task->update([
-            'status' => $validatedData['status'],
-        ]);
+    private function checkTaskStatus(Task $task, string $status)
+    {
+        switch ($status) {
+            case 'DISPUTED':
+                if ($task->fulfilled_at && (Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) < 15)) {
+                    throw new \InvalidArgumentException('Task must be open for at least 15 days before it can be disputed.');
+                }
+                break;
+        }
     }
 
     public function edit($id)
     {
         $task = Task::with('brand')->find($id);
+
+        if ($task->submitter_id !== Auth::id()) {
+            return redirect()->route('task.index')->with('error', 'Cannot update someone else task.');
+        }
 
         return Inertia::render('Task/Edit', [
              'task' => $task,
@@ -182,10 +210,16 @@ class TaskController extends Controller
 
     public function update(Request $request, $id)
     {
+        $task = Task::findOrFail($id);
+
+        if ($task->status !== 'AVAILABLE') {
+            return redirect()->route('task.index')->with('error', 'Only Non-Executed tasks can be updated.');
+        }
+
         $validatedData = $request->validate([
             'country_id' => ['required', 'numeric'],
             'brand' => ['required', 'string'],
-            'website' => ['required', 'string', 'url'],
+            'website' => ['required', 'string'],
             'submitter_credits' => ['required', 'numeric'],
             'executor_credits' => ['required', 'numeric'],
             'task' => ['required', 'string', new BlacklistedTaskRule, Rule::unique('tasks', 'key')->ignore($id)],
@@ -199,8 +233,6 @@ class TaskController extends Controller
         if (!$brand) {
             $brand = Brand::create(['name' => $request->brand]);
         }
-
-        $task = Task::findOrFail($id);
 
         $task->update([
             'key' => $validatedData['task'],
@@ -218,8 +250,13 @@ class TaskController extends Controller
 
     public function destroy($id)
     {
-        $blacklistedTask = Task::findOrFail($id);
+        $task = Task::findOrFail($id);
 
-        $blacklistedTask->delete();
+        if ($task->submitter_id === Auth::id()) {
+            $task->delete();
+            return redirect()->route('task.index');
+        }
+
+        return redirect()->route('task.index')->with('error', 'Cannot delete other user tasks');
     }
 }

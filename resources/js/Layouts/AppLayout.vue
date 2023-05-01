@@ -23,7 +23,7 @@ onMounted(() => {
         Toastify({
             text: message,
             className: className,
-            duration: 3000,
+            duration: -1,
             close: true,
             gravity: "top",
             position: "right",
@@ -42,5 +42,5 @@ onMounted(() => {
 
     <Footer />
 
-    <Sidebar ref="sidebarRef" />
+    <Sidebar ref="sidebarRef" v-if="$page.props.auth.user" />
 </template>
