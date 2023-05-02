@@ -55,7 +55,7 @@ class LoginRequest extends FormRequest
         RateLimiter::clear($this->throttleKey());
     }
 
-    private function findUser(): User
+    private function findUser(): ?User
     {
         return User::where('phone', $this->input('phone'))->first();
     }
