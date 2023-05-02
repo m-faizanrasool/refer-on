@@ -32,6 +32,44 @@ class TaskController extends Controller
         return inertia('Task/Create');
     }
 
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'country_id' => ['required', 'numeric'],
+            'brand' => ['required', 'string'],
+            'website' => ['required', 'string'],
+            'submitter_credits' => ['required', 'numeric'],
+            'executor_credits' => ['required', 'numeric'],
+            'task' => ['required', 'string', Rule::unique('tasks', 'key')],
+            'summary' => ['required', 'string'],
+        ], [
+            'brand.unique' => 'The :attribute name already exists.',
+            'task.unique' => 'This code already exists.'
+        ]);
+
+        //create brand
+        $brand = Brand::firstOrCreate(['name' => $request->brand]);
+
+        try {
+            TaskService::validate($validatedData['country_id'], $brand->id, $validatedData['task']);
+        } catch (\Throwable $th) {
+            return redirect()->route('task.create')->with('error', $th->getMessage());
+        }
+
+        $task = Task::create([
+            'key' => $validatedData['task'],
+            'brand_id' => $brand->id,
+            'country_id' => $validatedData['country_id'],
+            'submitter_id' => Auth::id(),
+            'website' => $validatedData['website'],
+            'summary' => $validatedData['summary'],
+            'submitter_credits' => $validatedData['submitter_credits'],
+            'executor_credits' => $validatedData['executor_credits'],
+        ]);
+
+        return redirect()->route('task.created', $task->id);
+    }
+
     public function show($id)
     {
         $task = Task::with(['submitter', 'brand'])->findOrFail($id);
@@ -45,42 +83,6 @@ class TaskController extends Controller
         ->exists();
 
         return inertia('Task/Show', compact('task', 'alreadyExists'));
-    }
-
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'country_id' => ['required', 'numeric'],
-            'brand' => ['required', 'string'],
-            'website' => ['required', 'string'],
-            'submitter_credits' => ['required', 'numeric'],
-            'executor_credits' => ['required', 'numeric'],
-            'task' => ['required', 'string', new BlacklistedTaskRule, Rule::unique('tasks', 'key')],
-            'summary' => ['required', 'string'],
-        ], [
-            'brand.unique' => 'The :attribute name already exists.',
-            'task.unique' => 'The :attribute already exists.'
-        ]);
-
-        //create brand
-        $brand = Brand::firstOrCreate(['name' => $request->brand]);
-
-        try {
-            $task = Task::create([
-                'key' => $validatedData['task'],
-                'brand_id' => $brand->id,
-                'country_id' => $validatedData['country_id'],
-                'submitter_id' => Auth::id(),
-                'website' => $validatedData['website'],
-                'summary' => $validatedData['summary'],
-                'submitter_credits' => $validatedData['submitter_credits'],
-                'executor_credits' => $validatedData['executor_credits'],
-            ]);
-
-            return redirect()->route('task.created', $task->id);
-        } catch (\Throwable $th) {
-            return redirect()->route('task.create')->with('error', $th->getMessage());
-        }
     }
 
     public function fulfill($task_id)
@@ -97,7 +99,7 @@ class TaskController extends Controller
 
         try {
             if (!$task->executor_id) {
-                TaskService::validate($task->id);
+                TaskService::validate($task->country_id, $task->brand_id);
 
                 $task->update([
                     'executor_id' => Auth::id(),
@@ -133,7 +135,7 @@ class TaskController extends Controller
         $task = Task::findOrFail($validatedData['task_id']);
 
         try {
-            TaskService::validate($validatedData['task_id'], $validatedData['key']);
+            TaskService::validate($task->country_id, $task->brand_id, $validatedData['key'], $task->id);
 
             $newTask = Task::create([
                 'key' => $validatedData['key'],

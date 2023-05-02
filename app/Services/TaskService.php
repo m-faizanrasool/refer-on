@@ -42,66 +42,81 @@ class TaskService
         return $availableTasks;
     }
 
-    public static function resetToAvailable($id)
+    public static function resetToAvailable(int $id): void
     {
         $task = Task::findOrFail($id);
 
-        $task->executor_id = null;
-        $task->fulfilled_at = null;
-        $task->status = "AVAILABLE";
-        $task->save();
+        $task->fill([
+            'executor_id' => null,
+            'fulfilled_at' => null,
+            'status' => 'AVAILABLE',
+        ])->save();
     }
 
-    public static function reportInvalid($id, $executor_id = null)
+
+
+    public static function reportInvalid(int $id, ?int $executor_id = null): void
     {
         $task = Task::findOrFail($id);
 
-        $task->status = "INVALID";
-        $task->executor_id = $executor_id ?? Auth::id();
-        $task->save();
+        $task->fill([
+            'executor_id' => $executor_id ?? Auth::id(),
+            'status' => 'INVALID',
+        ])->save();
 
         $submitter = $task->submitter;
         $submitter->demerit_points += 1;
 
-        if ($submitter->demerit_points % 3 == 0) {
-            $submitter->status = "BLOCKED";
-            $submitter->blocked_until = Carbon::now()->addDays(90);
+        if ($submitter->demerit_points % 3 === 0) {
+            $submitter->fill([
+                'status' => 'BLOCKED',
+                'blocked_until' => Carbon::now()->addDays(90),
+            ])->save();
+        } else {
+            $submitter->save();
         }
+    }
 
-        $submitter->save();
+    public static function isDuplicateTask(int $country_id, int $brand_id): void
+    {
+        $task = Task::where('country_id', $country_id)
+            ->where('brand_id', $brand_id)
+            ->where(function ($query) {
+                $query->where('submitter_id', Auth::id())
+                    ->orWhere('executor_id', Auth::id());
+            })
+            ->get();
 
-        return $task;
+        if ($task->count() > 1) {
+            throw new \Exception('You can only submit or complete one task for ' . $task->first()->brand->name . ' in ' . $task->first()->country->name . '.');
+        }
+    }
+
+    public static function isBlacklisted(string $key, int $brand_id): bool
+    {
+        $isblacklistedTask = BlacklistedTasks::where([
+            'key' => $key,
+            'brand_id' => $brand_id,
+            'country_id' => Auth::user()->country_id,
+        ])->exists();
+
+        return $isblacklistedTask;
     }
 
     /**
-     * @param  \App\Models\Task  $task
-     */
-    public static function validate($task_id, $key = null)
+         * @param  \App\Models\Task  $task
+         */
+    public static function validate($country_id, $brand_id, $key = null, $task_id = null)
     {
         try {
-            $task = Task::findOrFail($task_id);
-
-            // Get count of tasks for this brand and country submitted or executed by the authenticated user
-            $count = Task::where('country_id', $task->country_id)
-                ->where('brand_id', $task->brand_id)
-                ->where(function ($query) {
-                    $query->where('submitter_id', Auth::id())
-                          ->orWhere('executor_id', Auth::id());
-                })
-                ->count();
-
-            if ($count > 1) {
-                throw new \Exception('You can only submit or complete one task for '.$task->brand->name.' in '.$task->country->name.'.');
-            }
+            self::isDuplicateTask($country_id, $brand_id);
 
             if ($key) {
-                // Check that the task is not on the blacklist
-                $blacklistedTask = BlacklistedTasks::where('key', $key)
-                    ->where('country_id', $task->country_id)
-                    ->where('brand_id', $task->brand_id)
-                    ->exists();
+                $isblacklistedTask = self::isBlacklisted($key, $brand_id);
 
-                if ($blacklistedTask) {
+                if ($isblacklistedTask && $task_id) {
+                    $task = Task::findOrFail($task_id);
+
                     $failedTask = Task::create([
                         'key' => $key,
                         'brand_id' => $task->brand_id,
@@ -123,12 +138,14 @@ class TaskService
                     }
 
                     $submitter->save();
+                }
 
-                    throw new \Exception('This task is blacklisted and cannot be submitted');
+                if ($isblacklistedTask) {
+                    throw new \Exception('This task is blacklisted and cannot be submitted.');
                 }
             }
         } catch (\Exception $exception) {
-            if ($key) {
+            if ($task_id) {
                 self::resetToAvailable($task_id);
             }
 

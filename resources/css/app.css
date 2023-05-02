@@ -109,7 +109,7 @@
     }
 
     .text-spaced {
-        @apply tracking-wider md:left-0;
+        @apply tracking-[0.3em] md:left-0;
     }
 
     .static-pages-container p {

@@ -6,7 +6,9 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 </script>
 
 <template>
-    <nav class="flex items-center justify-between px-4 py-6 font-bold md:p-6">
+    <nav
+        class="flex items-center justify-between px-4 py-6 font-extrabold md:p-6"
+    >
         <div class="flex items-center gap-2.5 md:gap-8">
             <div class="flex items-center gap-2">
                 <div class="border-2 shadow-xl avatar">
@@ -27,7 +29,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
             </Link>
         </div>
 
-        <div class="flex items-center gap-6 md:gap-8">
+        <div class="flex items-center gap-6 md:gap-12">
             <Link class="hidden md:block" :href="route('howitworks')"
                 >How it works</Link
             >
