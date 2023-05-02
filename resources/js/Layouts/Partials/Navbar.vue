@@ -28,7 +28,9 @@ import DropdownLink from "@/Components/DropdownLink.vue";
         </div>
 
         <div class="flex items-center gap-6 md:gap-8">
-            <div class="hidden md:block">How it works</div>
+            <Link class="hidden md:block" :href="route('howitworks')"
+                >How it works</Link
+            >
 
             <Link
                 :href="route('login')"

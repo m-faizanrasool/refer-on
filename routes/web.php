@@ -3,6 +3,7 @@
 use App\Http\Controllers\BlacklistedTaskController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StaticPageController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\IsAdminMiddleware;
@@ -21,12 +22,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name("home");
 
+Route::get('about-us', [StaticPageController::class, 'aboutus'])->name('aboutus');
+Route::get('how-it-works', [StaticPageController::class, 'howitworks'])->name('howitworks');
+Route::get('privacy-policy', [StaticPageController::class, 'privacypolicy'])->name('privacypolicy');
+Route::get('term-of-use', [StaticPageController::class, 'termofuse'])->name('termofuse');
+
 Route::middleware('auth')->group(function () {
     Route::get('profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('profile/detail/{user_id?}', [ProfileController::class, 'detail'])->name('profile.detail');
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    //make route for aboutus page, how it works, privacy policy and termof use
 
     Route::get('task/fulfill/{task_id}', [TaskController::class, 'fulfill'])->name('task.fulfill');
     Route::post('task/invalid', [TaskController::class, 'invalid'])->name('task.invalid');

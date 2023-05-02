@@ -111,6 +111,30 @@
     .text-spaced {
         @apply tracking-wider md:left-0;
     }
+
+    .static-pages-container p {
+        @apply text-lg text-[#575353] leading-7 mb-3;
+    }
+
+    .static-pages-container h6 {
+        @apply mb-4 text-lg font-medium leading-7 text-black underline;
+    }
+
+    .static-pages-container ul {
+        @apply mb-4 ml-6 list-disc;
+    }
+
+    .static-pages-container ol {
+        @apply mb-4 ml-6;
+    }
+
+    .static-pages-container li {
+        @apply mb-2;
+    }
+
+    .static-pages-container li > ul {
+        @apply mt-2;
+    }
 }
 
 @layer utilities {

@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+import { Link } from "@inertiajs/vue3";
+</script>
 
 <template>
     <footer
@@ -11,9 +13,9 @@
         <div
             class="flex flex-col gap-3 mb-2 text-center sm:flex-row md:gap-[70px] md:mb-0"
         >
-            <h6>About us</h6>
-            <h6>Terms and conditions</h6>
-            <h6>Privacy policy</h6>
+            <Link :href="route('aboutus')">About us</Link>
+            <Link :href="route('termofuse')">Terms and conditions</Link>
+            <Link :href="route('privacypolicy')">Privacy policy</Link>
         </div>
     </footer>
 </template>
