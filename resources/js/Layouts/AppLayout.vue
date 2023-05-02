@@ -23,7 +23,7 @@ onMounted(() => {
         Toastify({
             text: message,
             className: className,
-            duration: -1,
+            duration: 3000,
             close: true,
             gravity: "top",
             position: "right",
