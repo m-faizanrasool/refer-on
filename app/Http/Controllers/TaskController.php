@@ -77,6 +77,7 @@ class TaskController extends Controller
 
         $alreadyExists = Task::where('country_id', $task->country_id)
         ->where('brand_id', $task->brand_id)
+        ->where('status', '<>', 'Invalid')
         ->where(function ($query) {
             $query->where('submitter_id', Auth::id())
                   ->orWhere('executor_id', Auth::id());
