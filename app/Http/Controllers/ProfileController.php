@@ -24,7 +24,7 @@ class ProfileController extends Controller
             $q->where('executor_id', $user_id)
                 ->orWhere('submitter_id', $user_id);
         })
-        ->where('status', '!=', 'INVALID')->get();
+        ->whereNotIn('status', ['INVALID', 'BLACKLISTED'])->get();
 
         $fulfilledTasks = $userTasks->where('executor_id', $user_id);
         $tasksFulfilledByOthers = $userTasks->where('submitter_id', $user_id)->whereNotNull('executor_id');
@@ -56,7 +56,7 @@ class ProfileController extends Controller
         $formattedTasks = $tasks->map(function ($task) {
             $task->submitter_name = $task->submitter->username;
             $task->executor_name =  $task->executor ? $task->executor->username : "";
-            $task->submitter_demerit_points = $task->status == "INVALID" ? 1 : "";
+            $task->submitter_demerit_points = $task->status == "INVALID" || $task->status == 'BLACKLISTED' ? 1 : "";
             $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
             $task->can_dispute = ($task->fulfilled_at && Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15);
             return $task;

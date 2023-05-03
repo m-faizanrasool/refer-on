@@ -6,6 +6,7 @@ use App\Models\BlacklistedTasks;
 use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class TaskService
 {
@@ -53,7 +54,7 @@ class TaskService
 
 
 
-    public static function reportInvalid(int $id, ?int $executor_id = null): void
+    public static function reportInvalid(int $id, ?int $executor_id = null)
     {
         $task = Task::findOrFail($id);
 
@@ -70,6 +71,10 @@ class TaskService
                 'status' => 'BLOCKED',
                 'blocked_until' => Carbon::now()->addDays(90),
             ])->save();
+
+            Auth::logout();
+
+            return redirect('/');
         } else {
             $submitter->save();
         }
@@ -131,12 +136,18 @@ class TaskService
                     $submitter = $failedTask->submitter;
                     $submitter->demerit_points += 1;
 
-                    if ($submitter->demerit_points % 3 == 0) {
-                        $submitter->status = "BLOCKED";
-                        $submitter->blocked_until = Carbon::now()->addDays(90);
-                    }
+                    if ($submitter->demerit_points % 3 === 0) {
+                        $submitter->fill([
+                            'status' => 'BLOCKED',
+                            'blocked_until' => Carbon::now()->addDays(90),
+                        ])->save();
 
-                    $submitter->save();
+                        Auth::logout();
+
+                        return redirect('/');
+                    } else {
+                        $submitter->save();
+                    }
                 }
 
                 if ($isblacklistedTask) {

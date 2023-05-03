@@ -20,14 +20,14 @@ class UserSeeder extends Seeder
             "country_id" => 148,
             "username" => 'Demo',
             "email" => 'demo@referon.com',
-            "phone" => '+92301112223',
+            "phone" => '+923011122230',
             "password" => 'demo',
         ]);
 
         User::create([
             "id" => 2,
             "is_admin" => false,
-            "country_id" => 170,
+            "country_id" => 148,
             "username" => 'client',
             "email" => 'client@referon.com',
             "phone" => '+923001234567',

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Task;
 use App\Providers\RouteServiceProvider;
-use App\Rules\BlacklistedTaskRule;
+use App\Rules\UniqueKeyRule;
 use App\Services\TaskService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -41,7 +41,7 @@ class TaskController extends Controller
             'website' => ['required', 'string'],
             'submitter_credits' => ['required', 'numeric'],
             'executor_credits' => ['required', 'numeric'],
-            'task' => ['required', 'string', Rule::unique('tasks', 'key')],
+            'task' => ['required', 'string', new UniqueKeyRule],
             'summary' => ['required', 'string'],
         ], [
             'brand.unique' => 'The :attribute name already exists.',
@@ -132,7 +132,7 @@ class TaskController extends Controller
     public function complete(Request $request)
     {
         $validatedData = $request->validate([
-            'key' => ['required', 'string', Rule::unique('tasks')],
+            'key' => ['required', 'string', new UniqueKeyRule],
             'task_id' => ['required', 'numeric'],
         ]);
 
@@ -229,7 +229,7 @@ class TaskController extends Controller
             'website' => ['required', 'string'],
             'submitter_credits' => ['required', 'numeric'],
             'executor_credits' => ['required', 'numeric'],
-            'task' => ['required', 'string', new BlacklistedTaskRule, Rule::unique('tasks', 'key')->ignore($id)],
+            'task' => ['required', 'string', Rule::unique('tasks', 'key')->ignore($id)],
             'summary' => ['required', 'string'],
         ], [
             'task.unique' => 'The :attribute already exists.'
