@@ -51,6 +51,11 @@ class User extends Authenticatable
         return ucfirst($value);
     }
 
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = Hash::make($value);
+    }
+
     public function country()
     {
         return $this->belongsTo(Country::class);
