@@ -15,6 +15,11 @@ class Brand extends Model
         'name',
     ];
 
+    public function getNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
+
     public function blacklistedTasks()
     {
         return $this->hasMany(BlacklistedTasks::class);

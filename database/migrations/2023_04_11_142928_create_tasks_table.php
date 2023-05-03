@@ -15,6 +15,7 @@ class CreateTasksTable extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id()->index();
+            $table->foreignId('parent_id')->nullable()->constrained('tasks');
             $table->string('key')->unique()->index();
             $table->unsignedSmallInteger('brand_id')->index();
             $table->unsignedSmallInteger('country_id')->index();

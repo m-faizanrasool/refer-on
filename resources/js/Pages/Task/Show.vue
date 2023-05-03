@@ -30,7 +30,7 @@ defineProps({
                 <div class="mb-4 text-lg font-bold">
                     {{ task.submitter.username }} will get ${{
                         task.submitter_credits
-                    }}
+                    }}.
                 </div>
 
                 <div class="mb-4 sm:px-4">
@@ -45,7 +45,9 @@ defineProps({
                 </div>
 
                 <div class="text-lg font-bold">
-                    You will get ${{ task.executor_credits }}
+                    {{ alreadyExists ? "Next user" : "You" }} will get ${{
+                        task.executor_credits
+                    }}.
                 </div>
 
                 <div class="mt-4 space-y-4 sm:mx-8" v-if="!alreadyExists">
@@ -77,12 +79,19 @@ defineProps({
                 </div>
             </div>
 
-            <div class="flex flex-col items-center justify-center p-8">
-                <img src="images/logos/amazon.png" alt="" />
+            <div class="flex flex-col items-center p-8">
+                <div>
+                    <img src="images/logo_default.svg" alt="" />
+                </div>
 
-                <div class="my-3">{{ task.website }}</div>
+                <a
+                    class="my-2 text-xl hover:underline"
+                    :href="task.website"
+                    target="_blank"
+                    >{{ task.website }}</a
+                >
 
-                <p>
+                <p class="text-xl">
                     {{ task.summary }}
                 </p>
             </div>

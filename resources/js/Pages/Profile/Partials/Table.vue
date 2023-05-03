@@ -169,12 +169,7 @@ const filterStatus = (status) => {
 };
 
 const updateTaskStatus = (status, task_id, canDispute) => {
-    if (canDispute) {
-        router.patch(route("task.updateStatus"), {
-            task_id,
-            status,
-        });
-    } else {
+    if (status === "DISPUTED" && !canDispute) {
         Toastify({
             text: "Task must be open for at least 15 days before it can be disputed.",
             className: "toastify-error",
@@ -182,7 +177,13 @@ const updateTaskStatus = (status, task_id, canDispute) => {
             close: true,
             stopOnFocus: true,
         }).showToast();
+        return;
     }
+
+    router.patch(route("task.updateStatus"), {
+        task_id,
+        status,
+    });
 };
 </script>
 

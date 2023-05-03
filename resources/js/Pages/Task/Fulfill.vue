@@ -85,12 +85,19 @@ const complete = () => {
                 </div>
             </div>
 
-            <div class="flex flex-col items-center justify-center p-8">
-                <img src="images/logos/amazon.png" alt="" />
+            <div class="flex flex-col items-center p-8">
+                <div>
+                    <img src="images/logo_default.svg" alt="" />
+                </div>
 
-                <div class="my-3">{{ task.website }}</div>
+                <a
+                    class="my-2 text-xl hover:underline"
+                    :href="task.website"
+                    target="_blank"
+                    >{{ task.website }}</a
+                >
 
-                <p>
+                <p class="text-xl">
                     {{ task.summary }}
                 </p>
             </div>

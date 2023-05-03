@@ -17,7 +17,8 @@ class TaskController extends Controller
 {
     public function index(): \Inertia\Response
     {
-        $tasks =   Task::where(function ($query) {
+        $tasks =   Task::with('childs')
+        ->where(function ($query) {
             $query->where('submitter_id', Auth::id())
                   ->orWhere('executor_id', Auth::id());
         })
@@ -85,15 +86,17 @@ class TaskController extends Controller
         return inertia('Task/Show', compact('task', 'alreadyExists'));
     }
 
-    public function fulfill($task_id)
+    public function fulfill($taskId)
     {
-        $task = Task::with('brand')->findOrFail($task_id);
+        $task = Task::with('brand')->findOrFail($taskId);
 
-        if ($task->executor_id && $task->executor_id !== Auth::id()) {
+        $authId = Auth::id();
+
+        if ($task->executor_id && $task->executor_id !== $authId || count($task->childs) > 1) {
             return redirect()->route('home')->with('error', 'Task already fulfilled');
         }
 
-        if ($task->submitter_id == Auth::id()) {
+        if ($task->submitter_id === $authId) {
             return redirect()->route('home')->with('error', 'You cannot fulfill your own task');
         }
 
@@ -102,15 +105,15 @@ class TaskController extends Controller
                 TaskService::validate($task->country_id, $task->brand_id);
 
                 $task->update([
-                    'executor_id' => Auth::id(),
+                    'executor_id' => $authId,
                     'status' => 'PENDING_VERIFICATION',
                     'fulfilled_at' => Carbon::now()
                 ]);
             }
 
             return inertia('Task/Fulfill', compact('task'));
-        } catch (\Throwable $th) {
-            return redirect()->route('home')->with('error', $th->getMessage());
+        } catch (\Throwable $e) {
+            return redirect()->route('home')->with('error', $e->getMessage());
         }
     }
 
@@ -141,6 +144,7 @@ class TaskController extends Controller
                 'key' => $validatedData['key'],
                 'brand_id' => $task->brand_id,
                 'country_id' => $task->country_id,
+                'parent_id' => $task->id,
                 'submitter_id' => Auth::id(),
                 'website' => $task->website,
                 'summary' => $task->summary,
@@ -154,9 +158,9 @@ class TaskController extends Controller
         }
     }
 
-    public function created($id)
+    public function created($taskId)
     {
-        $task = Task::with(['brand'])->findOrFail($id);
+        $task = Task::with(['brand'])->findOrFail($taskId);
 
         return Inertia::render('Task/Success', [
             'task' => $task,
@@ -254,11 +258,11 @@ class TaskController extends Controller
     {
         $task = Task::findOrFail($id);
 
-        if ($task->submitter_id === Auth::id()) {
+        if ($task->submitter_id === Auth::id() && $task->status === 'AVAILABLE') {
             $task->delete();
             return redirect()->route('task.index');
         }
 
-        return redirect()->route('task.index')->with('error', 'Cannot delete other user tasks');
+        return redirect()->route('task.index')->with('error', 'Cannot delete task');
     }
 }

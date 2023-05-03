@@ -82,7 +82,9 @@ defineProps({
                             :href="route('task.fulfill', task.id)"
                             v-if="
                                 task.status === 'PENDING_VERIFICATION' &&
-                                task.submitter_id !== $page.props.auth.user.id
+                                task.submitter_id !==
+                                    $page.props.auth.user.id &&
+                                !task.childs.length
                             "
                         >
                             Fullfill

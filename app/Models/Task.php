@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use PhpParser\Node\Expr\FuncCall;
 
 class Task extends Model
 {
@@ -12,6 +13,7 @@ class Task extends Model
 
     protected $fillable = [
         'key',
+        'parent_id',
         'brand_id',
         'country_id',
         'submitter_id',
@@ -49,6 +51,11 @@ class Task extends Model
     public function submitter()
     {
         return $this->belongsTo(User::class, 'submitter_id');
+    }
+
+    public function childs()
+    {
+        return $this->hasMany(Task::class, 'parent_id', 'id');
     }
 
     public function executor()

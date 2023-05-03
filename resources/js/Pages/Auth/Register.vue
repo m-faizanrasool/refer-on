@@ -3,11 +3,13 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
+
 import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
 import { computed, onMounted, reactive, ref } from "vue";
 
 import { initializeApp } from "firebase/app";
 import intlTelInput from "intl-tel-input";
+import Toastify from "toastify-js";
 
 import {
     getAuth,
@@ -98,7 +100,14 @@ const otpVerify = () => {
             otpVerified.value = true;
         })
         .catch((error) => {
-            console.log("error", error.message);
+            Toastify({
+                text: "Invalid Otp.",
+                className: "toastify-error",
+                duration: 3000,
+                close: true,
+                stopOnFocus: true,
+            }).showToast();
+            return;
         });
 };
 

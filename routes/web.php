@@ -36,10 +36,10 @@ Route::middleware('auth')->group(function () {
 
     //make route for aboutus page, how it works, privacy policy and termof use
 
-    Route::get('task/fulfill/{task_id}', [TaskController::class, 'fulfill'])->name('task.fulfill');
+    Route::get('task/fulfill/{taskId}', [TaskController::class, 'fulfill'])->name('task.fulfill');
     Route::post('task/invalid', [TaskController::class, 'invalid'])->name('task.invalid');
     Route::post('task/complete', [TaskController::class, 'complete'])->name('task.complete');
-    Route::get('task/created/{task_id}', [TaskController::class, 'created'])->name('task.created');
+    Route::get('task/created/{taskId}', [TaskController::class, 'created'])->name('task.created');
     Route::patch('task', [TaskController::class, 'updateStatus'])->name('task.updateStatus');
 
     Route::resources([

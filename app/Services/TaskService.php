@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\BlacklistedTasks;
 use App\Models\Task;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +16,6 @@ class TaskService
         $tasks = Task::with(['submitter', 'brand'])
             ->where('country_id', $country_id)
             ->where('status', 'AVAILABLE')
-            ->where('submitter_id', '<>', Auth::id())
             ->where(function ($q) use ($query) {
                 $q->whereHas('brand', function ($brand) use ($query) {
                     $brand->where('name', 'Like', '%'.$query.'%');
