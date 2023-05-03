@@ -121,6 +121,11 @@ const statusesExecutor = [
         value: "INVALID",
         class: "text-red-400",
     },
+    {
+        label: "You tried to create a blacklisted task",
+        value: "BLACKLISTED",
+        class: "text-red-400",
+    },
 ];
 
 const statusesSubmitter = [
@@ -265,7 +270,8 @@ const updateTaskStatus = (status, task_id, canDispute) => {
                         v-if="
                             task.status === 'AVAILABLE' ||
                             task.status === 'DISPUTED' ||
-                            task.status === 'INVALID'
+                            task.status === 'INVALID' ||
+                            task.status === 'BLACKLISTED'
                         "
                     >
                         <span

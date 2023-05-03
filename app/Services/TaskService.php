@@ -79,6 +79,7 @@ class TaskService
     {
         $task = Task::where('country_id', $country_id)
             ->where('brand_id', $brand_id)
+            ->whereNotIn('status', ['INVALID', 'BLACKLISTED'])
             ->where(function ($query) {
                 $query->where('submitter_id', Auth::id())
                     ->orWhere('executor_id', Auth::id());
@@ -124,7 +125,7 @@ class TaskService
                         'summary' => $task->summary,
                         'submitter_credits' => 0,
                         'executor_credits' => 0,
-                        'status' => 'INVALID',
+                        'status' => 'BLACKLISTED',
                     ]);
 
                     $submitter = $failedTask->submitter;

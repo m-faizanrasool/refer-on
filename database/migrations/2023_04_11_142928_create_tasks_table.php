@@ -26,7 +26,7 @@ class CreateTasksTable extends Migration
             $table->integer('submitter_credits');
             $table->integer('executor_credits')->nullable();
             $table->timestamp('fulfilled_at')->nullable();
-            $table->enum('status', ['VERIFIED', 'DISPUTED', 'PENDING_VERIFICATION', 'INVALID', 'AVAILABLE'])->default('AVAILABLE');
+            $table->enum('status', ['VERIFIED', 'DISPUTED', 'PENDING_VERIFICATION', 'INVALID', 'BLACKLISTED', 'AVAILABLE'])->default('AVAILABLE');
             $table->json('tags')->nullable();
             $table->timestamps();
             $table->softDeletes();
