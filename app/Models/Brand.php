@@ -11,8 +11,12 @@ class Brand extends Model
     use HasFactory;
 
     protected $fillable = [
-        'key',
         'name',
+        'country_id',
+        'website',
+        'summary',
+        'submitter_credits',
+        'executor_credits',
     ];
 
     public function getNameAttribute($value)
@@ -28,22 +32,5 @@ class Brand extends Model
     public function tasks()
     {
         return $this->hasMany(Task::class);
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($brand) {
-            $key = Str::slug($brand->name);
-
-            // Check if the key already exists, and if so, append a number to make it unique
-            $count = 1;
-            while (static::where('key', $key)->exists()) {
-                $key = Str::slug($brand->name) . '-' . $count++;
-            }
-
-            $brand->key = $key;
-        });
     }
 }

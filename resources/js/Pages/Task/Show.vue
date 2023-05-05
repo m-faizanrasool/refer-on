@@ -29,7 +29,7 @@ defineProps({
 
                 <div class="mb-4 text-lg font-bold">
                     {{ task.submitter.username }} will get ${{
-                        task.submitter_credits
+                        task.brand.submitter_credits
                     }}.
                 </div>
 
@@ -39,14 +39,14 @@ defineProps({
                         type="text"
                         class="block w-full mt-1 font-bold text-center !rounded-xl"
                         readonly
-                        :value="task.key"
+                        :value="task.code"
                         v-on:focus="$event.target.select()"
                     />
                 </div>
 
                 <div class="text-lg font-bold">
                     {{ alreadyExists ? "Next user" : "You" }} will get ${{
-                        task.executor_credits
+                        task.brand.executor_credits
                     }}.
                 </div>
 
@@ -86,13 +86,13 @@ defineProps({
 
                 <a
                     class="my-2 text-xl hover:underline"
-                    :href="task.website"
+                    :href="task.brand.website"
                     target="_blank"
-                    >{{ task.website }}</a
+                    >{{ task.brand.website }}</a
                 >
 
                 <p class="text-xl">
-                    {{ task.summary }}
+                    {{ task.brand.summary }}
                 </p>
             </div>
         </div>

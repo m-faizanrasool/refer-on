@@ -7,9 +7,9 @@ import { Head, usePage } from "@inertiajs/vue3";
 const props = usePage().props;
 
 defineProps({
-    fulfilledTaskCount: Number,
+    fulfilledTasks: Number,
     fulfilledTasksEarnings: Number,
-    tasksFulfilledByOthersCount: Number,
+    tasksFulfilledByOthers: Number,
     tasksFulfilledByOthersEarnings: Number,
 });
 </script>
@@ -31,7 +31,7 @@ defineProps({
                         <TextInput
                             type="text"
                             class="w-32 text-center"
-                            :value="fulfilledTaskCount"
+                            :value="fulfilledTasks"
                             readonly
                         />
 
@@ -61,7 +61,7 @@ defineProps({
                         <TextInput
                             type="text"
                             class="w-32 text-center"
-                            :value="tasksFulfilledByOthersCount"
+                            :value="tasksFulfilledByOthers"
                             readonly
                         />
 

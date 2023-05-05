@@ -16,25 +16,15 @@ class CreateTasksTable extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id()->index();
             $table->foreignId('parent_id')->nullable()->constrained('tasks');
-            $table->string('key')->index();
-            $table->unsignedSmallInteger('brand_id')->index();
-            $table->unsignedSmallInteger('country_id')->index();
-            $table->unsignedBigInteger('submitter_id')->index();
-            $table->unsignedBigInteger('executor_id')->index()->nullable();
-            $table->string('website');
-            $table->text('summary');
-            $table->integer('submitter_credits');
-            $table->integer('executor_credits')->nullable();
+            $table->string('code')->index();
+            $table->foreignId('brand_id')->constrained('brands');
+            $table->foreignId('submitter_id')->constrained('users');
+            $table->foreignId('executor_id')->nullable()->constrained('users');
             $table->timestamp('fulfilled_at')->nullable();
             $table->enum('status', ['VERIFIED', 'DISPUTED', 'PENDING_VERIFICATION', 'INVALID', 'BLACKLISTED', 'AVAILABLE'])->default('AVAILABLE');
             $table->json('tags')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('submitter_id')->references('id')->on('users');
-            $table->foreign('executor_id')->references('id')->on('users');
-            $table->foreign('brand_id')->references('id')->on('brands');
-            $table->foreign('country_id')->references('id')->on('countries');
         });
     }
 

@@ -43,11 +43,11 @@ const filterTasks = (searchValue, userId) => {
         const searchLower = searchValue.toLowerCase();
 
         const fieldsToSearch = [
-            task.country_name,
+            // task.brand.country_id,
             task.formatted_created_at,
-            task.brand_name,
+            task.brand.name,
             task.submitter.username,
-            task.key,
+            task.code,
             task.status,
         ];
 
@@ -74,7 +74,7 @@ const filterTasks = (searchValue, userId) => {
     });
 };
 
-const sortTasks = (tasks, type) => {
+const sortTasks = (tasks) => {
     if (sortBy.value !== "") {
         tasks.sort((a, b) => {
             const sortOrder = sortTasksDesc.value ? -1 : 1;
@@ -235,17 +235,17 @@ const updateTaskStatus = (status, task_id, canDispute) => {
         </div>
 
         <div class="flex table-head" v-for="task in Tasks" :key="task.id">
-            <div>{{ task.country_name }}</div>
+            <div>{{ task.brand.country_id }}</div>
             <div>{{ task.formatted_created_at }}</div>
-            <div>{{ task.brand_name }}</div>
-            <div>{{ task.submitter_name }}</div>
-            <div>{{ task.key }}</div>
-            <div>{{ task.executor_name }}</div>
+            <div>{{ task.brand.name }}</div>
+            <div>{{ task.submitter.username }}</div>
+            <div>{{ task.code }}</div>
+            <div>{{ task.executor?.username ?? "" }}</div>
             <div>
                 ${{
                     taskType == "submitter"
-                        ? task.submitter_credits
-                        : task.executor_credits
+                        ? task.brand.submitter_credits
+                        : task.brand.executor_credits
                 }}
             </div>
 
@@ -309,7 +309,7 @@ const updateTaskStatus = (status, task_id, canDispute) => {
                 </div>
             </div>
 
-            <div>{{ task.submitter_demerit_points }}</div>
+            <div>{{ task.demerit_point }}</div>
         </div>
     </div>
 </template>

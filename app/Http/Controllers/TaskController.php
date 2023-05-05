@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Task;
 use App\Providers\RouteServiceProvider;
+use App\Rules\BrandUniqueRule;
 use App\Rules\UniqueKeyRule;
 use App\Services\TaskService;
 use Carbon\Carbon;
@@ -37,35 +38,38 @@ class TaskController extends Controller
     {
         $validatedData = $request->validate([
             'country_id' => ['required', 'numeric'],
-            'brand' => ['required', 'string'],
+            'brand' => ['required', 'string', new BrandUniqueRule($request->country_id)],
             'website' => ['required', 'string'],
             'submitter_credits' => ['required', 'numeric'],
             'executor_credits' => ['required', 'numeric'],
-            'task' => ['required', 'string', new UniqueKeyRule],
+            'code' => ['required', 'string', new UniqueKeyRule],
             'summary' => ['required', 'string'],
         ], [
             'brand.unique' => 'The :attribute name already exists.',
             'task.unique' => 'This code already exists.'
         ]);
 
-        //create brand
-        $brand = Brand::firstOrCreate(['name' => $request->brand]);
-
-        try {
-            TaskService::validate($validatedData['country_id'], $brand->id, $validatedData['task']);
-        } catch (\Throwable $th) {
-            return redirect()->route('task.create')->with('error', $th->getMessage());
-        }
-
-        $task = Task::create([
-            'key' => $validatedData['task'],
-            'brand_id' => $brand->id,
+        // create brand
+        $brand = Brand::create([
+            'name' => $validatedData['brand'],
             'country_id' => $validatedData['country_id'],
-            'submitter_id' => Auth::id(),
             'website' => $validatedData['website'],
             'summary' => $validatedData['summary'],
             'submitter_credits' => $validatedData['submitter_credits'],
             'executor_credits' => $validatedData['executor_credits'],
+        ]);
+
+        try {
+            TaskService::validate($brand->id, $validatedData['code']);
+        } catch (\Throwable $th) {
+            $brand->delete();
+            return redirect()->route('task.create')->with('error', $th->getMessage());
+        }
+
+        $task = Task::create([
+            'code' => $validatedData['code'],
+            'brand_id' => $brand->id,
+            'submitter_id' => Auth::id(),
         ]);
 
         return redirect()->route('task.created', $task->id);
@@ -75,8 +79,7 @@ class TaskController extends Controller
     {
         $task = Task::with(['submitter', 'brand'])->findOrFail($id);
 
-        $alreadyExists = Task::where('country_id', $task->country_id)
-        ->where('brand_id', $task->brand_id)
+        $alreadyExists = Task::where('brand_id', $task->brand_id)
         ->whereNotIn('status', ['INVALID', 'BLACKLISTED'])
         ->where(function ($query) {
             $query->where('submitter_id', Auth::id())
@@ -93,17 +96,17 @@ class TaskController extends Controller
 
         $authId = Auth::id();
 
-        if ($task->executor_id && $task->executor_id !== $authId || count($task->childs) > 1) {
-            return redirect()->route('home')->with('error', 'Task already fulfilled');
-        }
-
         if ($task->submitter_id === $authId) {
             return redirect()->route('home')->with('error', 'You cannot fulfill your own task');
         }
 
+        if ($task->executor_id && $task->executor_id !== $authId || count($task->childs) > 1) {
+            return redirect()->route('home')->with('error', 'Task already fulfilled');
+        }
+
         try {
             if (!$task->executor_id) {
-                TaskService::validate($task->country_id, $task->brand_id);
+                TaskService::validate($task->brand_id);
 
                 $task->update([
                     'executor_id' => $authId,
@@ -132,25 +135,20 @@ class TaskController extends Controller
     public function complete(Request $request)
     {
         $validatedData = $request->validate([
-            'key' => ['required', 'string', new UniqueKeyRule],
+            'code' => ['required', 'string', new UniqueKeyRule],
             'task_id' => ['required', 'numeric'],
         ]);
 
         $task = Task::findOrFail($validatedData['task_id']);
 
         try {
-            TaskService::validate($task->country_id, $task->brand_id, $validatedData['key'], $task->id);
+            TaskService::validate($task->brand_id, $validatedData['code'], $task->id);
 
             $newTask = Task::create([
-                'key' => $validatedData['key'],
+                'code' => $validatedData['code'],
                 'brand_id' => $task->brand_id,
-                'country_id' => $task->country_id,
                 'parent_id' => $task->id,
                 'submitter_id' => Auth::id(),
-                'website' => $task->website,
-                'summary' => $task->summary,
-                'submitter_credits' => $task->submitter_credits,
-                'executor_credits' => $task->executor_credits,
             ]);
 
             return redirect()->route('task.created', $newTask->id);
@@ -200,59 +198,6 @@ class TaskController extends Controller
                 }
                 break;
         }
-    }
-
-    public function edit($id)
-    {
-        $task = Task::with('brand')->find($id);
-
-        if ($task->submitter_id !== Auth::id()) {
-            return redirect()->route('task.index')->with('error', 'Cannot update someone else task.');
-        }
-
-        return Inertia::render('Task/Edit', [
-             'task' => $task,
-        ]);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $task = Task::findOrFail($id);
-
-        if ($task->status !== 'AVAILABLE') {
-            return redirect()->route('task.index')->with('error', 'Only Non-Executed tasks can be updated.');
-        }
-
-        $validatedData = $request->validate([
-            'country_id' => ['required', 'numeric'],
-            'brand' => ['required', 'string'],
-            'website' => ['required', 'string'],
-            'submitter_credits' => ['required', 'numeric'],
-            'executor_credits' => ['required', 'numeric'],
-            'task' => ['required', 'string', Rule::unique('tasks', 'key')->ignore($id)],
-            'summary' => ['required', 'string'],
-        ], [
-            'task.unique' => 'The :attribute already exists.'
-        ]);
-
-        $brand = Brand::where('name', $request->brand)->first();
-
-        if (!$brand) {
-            $brand = Brand::create(['name' => $request->brand]);
-        }
-
-        $task->update([
-            'key' => $validatedData['task'],
-            'brand_id' => $brand->id,
-            'country_id' => $validatedData['country_id'],
-            'submitter_id' => Auth::id(),
-            'website' => $validatedData['website'],
-            'summary' => $validatedData['summary'],
-            'submitter_credits' => $validatedData['submitter_credits'],
-            'executor_credits' => $validatedData['executor_credits'],
-        ]);
-
-        return redirect()->route('task.index');
     }
 
     public function destroy($id)

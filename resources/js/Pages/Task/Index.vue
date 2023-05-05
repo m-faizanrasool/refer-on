@@ -49,7 +49,7 @@ defineProps({
 
                     <div class="max-w-[120px] min-w-[100px]">
                         <div class="font-bold">Code</div>
-                        <div class="text-lg truncate">{{ task.key }}</div>
+                        <div class="text-lg truncate">{{ task.code }}</div>
                     </div>
 
                     <div class="max-w-[220px] min-w-[220px]">
@@ -69,14 +69,6 @@ defineProps({
 
                 <div>
                     <div class="flex gap-4">
-                        <Link
-                            class="btn btn-success"
-                            :href="route('task.edit', task.id)"
-                            v-if="task.status === 'AVAILABLE'"
-                        >
-                            Edit
-                        </Link>
-
                         <Link
                             class="btn btn-primary"
                             :href="route('task.fulfill', task.id)"

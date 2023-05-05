@@ -14,7 +14,7 @@ const form = useForm({
     website: "",
     submitter_credits: "",
     executor_credits: "",
-    task: "",
+    code: "",
     summary: "",
 });
 
@@ -187,14 +187,14 @@ const submit = () => {
                         id="task"
                         type="text"
                         class="block w-full"
-                        v-model="form.task"
+                        v-model="form.code"
                         placeholder="e.g. netflix_code_123"
                         required
                     />
 
                     <InputError
                         class="!mt-1.5 ml-2"
-                        :message="form.errors.task"
+                        :message="form.errors.code"
                     />
                 </div>
 

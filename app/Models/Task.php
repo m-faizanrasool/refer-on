@@ -12,16 +12,11 @@ class Task extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'key',
+        'code',
         'parent_id',
         'brand_id',
-        'country_id',
         'submitter_id',
         'executor_id',
-        'website',
-        'summary',
-        'submitter_credits',
-        'executor_credits',
         'fulfilled_at',
         'status',
         'tags',
@@ -29,18 +24,12 @@ class Task extends Model
 
     protected $appends = [
         'brand_name',
-        'country_name',
         'executor_name',
     ];
 
     public function getBrandNameAttribute()
     {
         return $this->brand->name;
-    }
-
-    public function getCountryNameAttribute()
-    {
-        return $this->country->name;
     }
 
     public function getExecutorNameAttribute()
@@ -66,10 +55,5 @@ class Task extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class);
-    }
-
-    public function country()
-    {
-        return $this->belongsTo(Country::class);
     }
 }

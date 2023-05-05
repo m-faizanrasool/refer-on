@@ -6,7 +6,6 @@ use App\Models\BlacklistedTasks;
 use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 
 class TaskService
 {
@@ -15,13 +14,11 @@ class TaskService
         $country_id = $country_id ?? Auth::user()->country_id;
 
         $tasks = Task::with(['submitter', 'brand'])
-            ->where('country_id', $country_id)
             ->where('status', 'AVAILABLE')
             ->where(function ($q) use ($query) {
                 $q->whereHas('brand', function ($brand) use ($query) {
                     $brand->where('name', 'Like', '%'.$query.'%');
-                })
-                ->orWhere('website', 'like', '%'.$query.'%');
+                });
             })
             ->get();
 
@@ -71,19 +68,14 @@ class TaskService
                 'status' => 'BLOCKED',
                 'blocked_until' => Carbon::now()->addDays(90),
             ])->save();
-
-            Auth::logout();
-
-            return redirect('/');
         } else {
             $submitter->save();
         }
     }
 
-    public static function isDuplicateTask(int $country_id, int $brand_id): void
+    public static function isDuplicateTask(int $brand_id): void
     {
-        $task = Task::where('country_id', $country_id)
-            ->where('brand_id', $brand_id)
+        $task = Task::where('brand_id', $brand_id)
             ->whereNotIn('status', ['INVALID', 'BLACKLISTED'])
             ->where(function ($query) {
                 $query->where('submitter_id', Auth::id())
@@ -110,10 +102,10 @@ class TaskService
     /**
          * @param  \App\Models\Task  $task
          */
-    public static function validate($country_id, $brand_id, $key = null, $task_id = null)
+    public static function validate($brand_id, $key = null, $task_id = null)
     {
         try {
-            self::isDuplicateTask($country_id, $brand_id);
+            self::isDuplicateTask($brand_id);
 
             if ($key) {
                 $isblacklistedTask = self::isBlacklisted($key, $brand_id);
@@ -124,12 +116,7 @@ class TaskService
                     $failedTask = Task::create([
                         'key' => $key,
                         'brand_id' => $task->brand_id,
-                        'country_id' => $task->country_id,
                         'submitter_id' => Auth::id(),
-                        'website' => $task->website,
-                        'summary' => $task->summary,
-                        'submitter_credits' => 0,
-                        'executor_credits' => 0,
                         'status' => 'BLACKLISTED',
                     ]);
 
@@ -141,10 +128,6 @@ class TaskService
                             'status' => 'BLOCKED',
                             'blocked_until' => Carbon::now()->addDays(90),
                         ])->save();
-
-                        Auth::logout();
-
-                        return redirect('/');
                     } else {
                         $submitter->save();
                     }

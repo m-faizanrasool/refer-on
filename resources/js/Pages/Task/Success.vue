@@ -32,17 +32,17 @@ defineProps({
                         class="block w-full mt-1 font-bold text-center !rounded-xl"
                         readonly
                         ref="taskKey"
-                        :value="task.key"
+                        :value="task.code"
                         v-on:focus="$event.target.select()"
                     />
                 </div>
 
                 <div class="mb-4 text-lg font-bold">
-                    You will get ${{ task.submitter_credits }}.
+                    You will get ${{ task.brand.submitter_credits }}.
                 </div>
 
                 <div class="text-lg font-bold">
-                    Next user will get ${{ task.executor_credits }}.
+                    Next user will get ${{ task.brand.executor_credits }}.
                 </div>
             </div>
 
@@ -53,13 +53,13 @@ defineProps({
 
                 <a
                     class="my-2 text-xl hover:underline"
-                    :href="task.website"
+                    :href="task.brand.website"
                     target="_blank"
                     >{{ task.website }}</a
                 >
 
                 <p class="text-xl">
-                    {{ task.summary }}
+                    {{ task.brand.summary }}
                 </p>
             </div>
         </div>

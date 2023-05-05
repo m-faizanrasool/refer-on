@@ -15,8 +15,12 @@ class CreateBrandsTable extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->smallIncrements('id')->index();
-            $table->string('key')->unique()->index();
+            $table->foreignId('country_id')->nullable()->constrained('countries');
             $table->string('name')->unique();
+            $table->string('website');
+            $table->text('summary');
+            $table->integer('submitter_credits');
+            $table->integer('executor_credits')->nullable();
             $table->timestamps();
         });
     }

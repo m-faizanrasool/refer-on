@@ -14,13 +14,13 @@ defineProps({
 });
 
 let form = useForm({
-    key: "",
+    code: "",
     task_id: task_id.value,
 });
 
 const complete = () => {
-    if (!form.key) {
-        form.setError("key", "Task field is required");
+    if (!form.code) {
+        form.setError("code", "Code field is required");
         return;
     }
     form.post(route("task.complete"), {
@@ -53,13 +53,13 @@ const complete = () => {
                         class="block w-full mt-1 font-bold text-center !rounded-xl"
                         readonly
                         ref="taskKey"
-                        :value="task.key"
+                        :value="task.code"
                         v-on:focus="$event.target.select()"
                     />
                 </div>
 
                 <div class="mb-4 text-lg font-bold">
-                    You got ${{ task.executor_credits }}.
+                    You got ${{ task.brand.executor_credits }}.
                 </div>
 
                 <div class="mb-4 text-lg font-bold">
@@ -72,10 +72,10 @@ const complete = () => {
                         id="country"
                         type="text"
                         class="block w-full mt-1 font-bold !rounded-xl"
-                        v-model="form.key"
+                        v-model="form.code"
                     />
 
-                    <InputError class="mt-2" :message="form.errors.key" />
+                    <InputError class="mt-2" :message="form.errors.code" />
                 </div>
 
                 <div class="flex justify-end my-4 md:px-4">
@@ -92,13 +92,13 @@ const complete = () => {
 
                 <a
                     class="my-2 text-xl hover:underline"
-                    :href="task.website"
+                    :href="task.brand.website"
                     target="_blank"
-                    >{{ task.website }}</a
+                    >{{ task.brand.website }}</a
                 >
 
                 <p class="text-xl">
-                    {{ task.summary }}
+                    {{ task.brand.summary }}
                 </p>
             </div>
         </div>

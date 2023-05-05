@@ -31,9 +31,9 @@ class ProfileController extends Controller
 
         return Inertia::render('Profile/Show', [
             'fulfilledTasks' => $fulfilledTasks->count(),
-            'fulfilledTasksEarnings' => $fulfilledTasks->sum('executor_credits'),
+            'fulfilledTasksEarnings' => $fulfilledTasks->pluck('brand.executor_credits')->sum(),
             'tasksFulfilledByOthers' => $tasksFulfilledByOthers->count(),
-            'tasksFulfilledByOthersEarnings' => $tasksFulfilledByOthers->sum('submitter_credits'),
+            'tasksFulfilledByOthersEarnings' => $tasksFulfilledByOthers->pluck('brand.submitter_credits')->sum(),
         ]);
     }
 
@@ -54,19 +54,20 @@ class ProfileController extends Controller
         })->get();
 
         $formattedTasks = $tasks->map(function ($task) {
-            $task->submitter_name = $task->submitter->username;
-            $task->executor_name =  $task->executor ? $task->executor->username : "";
-            $task->submitter_demerit_points = $task->status == "INVALID" || $task->status == 'BLACKLISTED' ? 1 : "";
+            $task->demerit_point = $task->status == "INVALID" || $task->status == 'BLACKLISTED' ? 1 : "";
             $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
             $task->can_dispute = ($task->fulfilled_at && Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15);
             return $task;
         });
 
+        $fulfilledTasks = $formattedTasks->where('executor_id', $user->id);
+        $tasksFulfilledByOthers = $formattedTasks->where('submitter_id', $user->id)->whereNotNull('executor_id');
+
         return Inertia::render('Profile/Detail', [
-            'fulfilledTaskCount' => $tasks->where('executor_id', $user->id)->count(),
-            'fulfilledTasksEarnings' => $tasks->where('executor_id', $user->id)->sum('executor_credits'),
-            'tasksFulfilledByOthersCount' => $tasks->where('submitter_id', $user->id)->whereNotNull('executor_id')->count(),
-            'tasksFulfilledByOthersEarnings' => $tasks->where('submitter_id', $user->id)->whereNotNull('executor_id')->sum('submitter_credits'),
+            'fulfilledTasks' => $fulfilledTasks->count(),
+            'fulfilledTasksEarnings' => $fulfilledTasks->pluck('brand.executor_credits')->sum(),
+            'tasksFulfilledByOthers' => $tasksFulfilledByOthers->count(),
+            'tasksFulfilledByOthersEarnings' => $tasksFulfilledByOthers->pluck('brand.submitter_credits')->sum(),
             'tasks' => $formattedTasks,
         ]);
     }

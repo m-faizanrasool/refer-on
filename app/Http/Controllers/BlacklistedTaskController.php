@@ -30,31 +30,22 @@ class BlacklistedTaskController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(
+        $validatedData = $request->validate(
             [
-            'key' => ['required',
-                Rule::unique('blacklisted_tasks', 'key')->where(function ($query) use ($request) {
-                    return $query->where('country_id', $request->country_id);
+            'code' => ['required',
+                Rule::unique('blacklisted_tasks', 'code')->where(function ($query) use ($request) {
+                    return $query->where('country_id', $request->country_id)
+                                  ->where('brand', $request->brand);
                 })],
             'brand' => 'required',
             'country_id' => 'required',
         ],
             [
-                'key.unique' => 'This task is already blacklisted for this country',
+                'code.unique' => 'This Code is already blacklisted for this brand and country',
             ]
         );
 
-        $brand = Brand::where('name', $request->brand)->first();
-
-        if (!$brand) {
-            $brand = Brand::create(['name' => $request->brand]);
-        }
-
-        BlacklistedTasks::create([
-            'key' => $request->key,
-            'brand_id' => $brand->id,
-            'country_id' => $request->country_id
-        ]);
+        BlacklistedTasks::create($validatedData);
 
         return redirect()->route('blacklisted-tasks.index');
     }
@@ -78,12 +69,13 @@ class BlacklistedTaskController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate(
-            [
-            'key' => ['required',
+        $validatedData = $request->validate(
+            ['code' => ['required',
                 Rule::unique('blacklisted_tasks', 'key')->where(function ($query) use ($request) {
-                    return $query->where('country_id', $request->country_id);
-                })],
+                    return $query->where('country_id', $request->country_id)
+                               ->where('brand', $request->brand);
+                })
+            ],
             'brand' => 'required',
             'country_id' => 'required',
         ],
@@ -92,19 +84,9 @@ class BlacklistedTaskController extends Controller
             ]
         );
 
-        $brand = Brand::where('name', $request->brand)->first();
-
-        if (!$brand) {
-            $brand = Brand::create(['name' => $request->brand]);
-        }
-
         $blacklistedTask = BlacklistedTasks::find($id);
 
-        $blacklistedTask->update([
-            'key' => $request->key,
-            'brand_id' => $brand->id,
-            'country_id' => $request->country_id
-        ]);
+        $blacklistedTask->update($validatedData);
 
         return redirect()->route('blacklisted-tasks.index');
     }
