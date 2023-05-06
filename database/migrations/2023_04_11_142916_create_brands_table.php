@@ -14,7 +14,8 @@ class CreateBrandsTable extends Migration
     public function up()
     {
         Schema::create('brands', function (Blueprint $table) {
-            $table->smallIncrements('id')->index();
+            $table->id();
+            $table->string('key')->unique()->index();
             $table->foreignId('country_id')->nullable()->constrained('countries');
             $table->string('name')->unique();
             $table->string('website');
@@ -22,6 +23,7 @@ class CreateBrandsTable extends Migration
             $table->integer('submitter_credits');
             $table->integer('executor_credits')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

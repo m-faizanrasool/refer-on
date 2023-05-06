@@ -8,7 +8,7 @@ import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const form = useForm({
-    key: "",
+    code: "",
     brand: "",
     country_id: "",
 });
@@ -32,20 +32,19 @@ const submit = () => {
 
         <form @submit.prevent="submit" class="mx-auto sm:w-3/5">
             <div>
-                <InputLabel for="task" value="Task" class="!font-bold" />
+                <InputLabel for="task-code" value="Code" class="!font-bold" />
 
                 <TextInput
-                    id="task"
+                    id="task-code"
                     type="text"
                     class="block w-full mt-1"
-                    v-model="form.key"
-                    placeholder="task_y"
+                    v-model="form.code"
+                    placeholder="netflix_block"
                     required
                     autofocus
-                    autocomplete="username"
                 />
 
-                <InputError class="mt-2" :message="form.errors.key" />
+                <InputError class="mt-2" :message="form.errors.code" />
             </div>
 
             <div class="mt-4">
@@ -55,10 +54,9 @@ const submit = () => {
                     id="brand"
                     type="text"
                     class="block w-full mt-1"
-                    placeholder="Fila"
+                    placeholder="netflix"
                     v-model="form.brand"
                     required
-                    autocomplete="current-brand"
                 />
 
                 <InputError class="mt-2" :message="form.errors.brand" />

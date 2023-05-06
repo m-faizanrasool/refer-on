@@ -33,4 +33,13 @@ class Brand extends Model
     {
         return $this->hasMany(Task::class);
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($brand) {
+            $brand->key = Str::lower(str_replace(' ', '_', $brand->name));
+        });
+    }
 }

@@ -23,6 +23,6 @@ class BrandUniqueRule implements Rule
 
     public function message()
     {
-        return 'The :attribute name already exists for this country.';
+        return 'The :attribute already exists for this country.';
     }
 }

@@ -14,7 +14,7 @@ class CreateTasksTable extends Migration
     public function up()
     {
         Schema::create('tasks', function (Blueprint $table) {
-            $table->id()->index();
+            $table->id();
             $table->foreignId('parent_id')->nullable()->constrained('tasks');
             $table->string('code')->index();
             $table->foreignId('brand_id')->constrained('brands');

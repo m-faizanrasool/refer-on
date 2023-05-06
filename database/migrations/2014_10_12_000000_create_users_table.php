@@ -15,20 +15,18 @@ return new class extends Migration {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->boolean('is_admin')->default(false);
+            $table->foreignId('country_id')->nullable()->constrained('countries');
             $table->string('username')->index();
             $table->string('email')->index();
             $table->string('phone')->index();
-            $table->unsignedSmallInteger('country_id')->index()->nullable();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->timestamp('email_verified_at')->nullable();
             $table->unsignedSmallInteger('demerit_points')->nullable()->index();
             $table->enum('status', ['ACTIVE', 'BLOCKED', 'PERMANENTLY_BLOCKED'])->default('ACTIVE');
             $table->timestamp('blocked_until')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('country_id')->references('id')->on('countries');
         });
     }
 

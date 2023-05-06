@@ -33,13 +33,13 @@ defineProps({
                 >
                     <div class="lg:w-[130px]">
                         <div class="font-bold">Task</div>
-                        <div class="text-xl truncate">{{ task.key }}</div>
+                        <div class="text-xl truncate">{{ task.code }}</div>
                     </div>
 
                     <div class="lg:w-[130px]">
                         <div class="font-bold">Brand</div>
                         <div class="text-xl truncate">
-                            {{ task.brand.name }}
+                            {{ task.brand_key }}
                         </div>
                     </div>
 

@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\BlacklistedTasks;
-use App\Models\Brand;
 use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class BlacklistedTaskController extends Controller
 {
     public function index()
     {
-        $blacklistedTask = BlacklistedTasks::with(['brand', 'country'])->get();
+        $blacklistedTask = BlacklistedTasks::with(['country'])->latest()->get();
 
         return Inertia::render('BlacklistedTask/Index', [
             'blacklistedTask' => $blacklistedTask,
@@ -35,7 +35,7 @@ class BlacklistedTaskController extends Controller
             'code' => ['required',
                 Rule::unique('blacklisted_tasks', 'code')->where(function ($query) use ($request) {
                     return $query->where('country_id', $request->country_id)
-                                  ->where('brand', $request->brand);
+                                  ->where('brand_key', Str::lower(str_replace(' ', '_', $request->brand)));
                 })],
             'brand' => 'required',
             'country_id' => 'required',
@@ -45,7 +45,11 @@ class BlacklistedTaskController extends Controller
             ]
         );
 
-        BlacklistedTasks::create($validatedData);
+        BlacklistedTasks::create([
+            'code' => $validatedData['code'],
+            'brand_key' => Str::lower(str_replace(' ', '_', $validatedData['brand'])),
+            'country_id' => $validatedData['country_id'],
+        ]);
 
         return redirect()->route('blacklisted-tasks.index');
     }
@@ -74,13 +78,13 @@ class BlacklistedTaskController extends Controller
                 Rule::unique('blacklisted_tasks', 'key')->where(function ($query) use ($request) {
                     return $query->where('country_id', $request->country_id)
                                ->where('brand', $request->brand);
-                })
+                })->ignore($id)
             ],
             'brand' => 'required',
             'country_id' => 'required',
         ],
             [
-                'key.unique' => 'This task is already blacklisted for this country',
+                'code.unique' => 'This task is already blacklisted for this country',
             ]
         );
 
