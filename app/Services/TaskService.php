@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\BlacklistedTasks;
+use App\Models\Brand;
 use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -91,56 +92,51 @@ class TaskService
 
     public static function isBlacklisted(string $code, int $brand_id): bool
     {
-        $isblacklistedTask = BlacklistedTasks::where([
+        return BlacklistedTasks::where([
             'code' => $code,
-            'brand_' => $brand_id,
+            'brand_key' => Brand::find($brand_id)->key,
             'country_id' => Auth::user()->country_id,
         ])->exists();
-
-        return $isblacklistedTask;
     }
 
     /**
          * @param  \App\Models\Task  $task
          */
-    public static function validate($brand_id, $code = null, $task_id = null)
+    public static function validate($brand_id, $code = null, $parent_id = null)
     {
         try {
             self::isDuplicateTask($brand_id);
 
-            // if ($key) {
-            //     $isblacklistedTask = self::isBlacklisted($key, $brand_id);
+            if ($code) {
+                $isblacklistedTask = self::isBlacklisted($code, $brand_id);
 
-            //     if ($isblacklistedTask && $task_id) {
-            //         $task = Task::findOrFail($task_id);
+                if ($isblacklistedTask) {
+                    $task = Task::findOrFail($parent_id);
 
-            //         $failedTask = Task::create([
-            //             'key' => $key,
-            //             'brand_id' => $task->brand_id,
-            //             'submitter_id' => Auth::id(),
-            //             'status' => 'BLACKLISTED',
-            //         ]);
+                    $failedTask = Task::create([
+                        'code' => $code,
+                        'brand_id' => $task->brand_id,
+                        'submitter_id' => Auth::id(),
+                        'status' => 'BLACKLISTED',
+                    ]);
 
-            //         $submitter = $failedTask->submitter;
-            //         $submitter->demerit_points += 1;
+                    $submitter = $failedTask->submitter;
 
-            //         if ($submitter->demerit_points % 3 === 0) {
-            //             $submitter->fill([
-            //                 'status' => 'BLOCKED',
-            //                 'blocked_until' => Carbon::now()->addDays(90),
-            //             ])->save();
-            //         } else {
-            //             $submitter->save();
-            //         }
-            //     }
+                    $submitter->demerit_points += 1;
+                    if ($submitter->demerit_points % 3 === 0) {
+                        $submitter->status = 'BLOCKED';
+                        $submitter->blocked_until = Carbon::now()->addDays(90);
+                        Auth::logout();
+                    }
 
-            //     if ($isblacklistedTask) {
-            //         throw new \Exception('This task is blacklisted and cannot be submitted.');
-            //     }
-            // }
+                    $submitter->save();
+
+                    throw new \Exception('This task is blacklisted and cannot be submitted.');
+                }
+            }
         } catch (\Exception $exception) {
-            if ($task_id) {
-                self::resetToAvailable($task_id);
+            if ($parent_id) {
+                self::resetToAvailable($parent_id);
             }
 
             throw $exception;
