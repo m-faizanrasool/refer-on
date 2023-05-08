@@ -51,8 +51,6 @@ class TaskService
         ])->save();
     }
 
-
-
     public static function reportInvalid(int $id, ?int $executor_id = null)
     {
         $task = Task::findOrFail($id);
@@ -62,17 +60,7 @@ class TaskService
             'status' => 'INVALID',
         ])->save();
 
-        $submitter = $task->submitter;
-        $submitter->demerit_points += 1;
-
-        if ($submitter->demerit_points % 3 === 0) {
-            $submitter->fill([
-                'status' => 'BLOCKED',
-                'blocked_until' => Carbon::now()->addDays(90),
-            ])->save();
-        } else {
-            $submitter->save();
-        }
+        self::addDemeritPoint($task->submitter);
     }
 
     public static function isDuplicateTask(int $brand_id): void
@@ -120,16 +108,7 @@ class TaskService
                         'status' => 'BLACKLISTED',
                     ]);
 
-                    $submitter = $failedTask->submitter;
-
-                    $submitter->demerit_points += 1;
-                    if ($submitter->demerit_points % 3 === 0) {
-                        $submitter->status = 'BLOCKED';
-                        $submitter->blocked_until = Carbon::now()->addDays(90);
-                        Auth::logout();
-                    }
-
-                    $submitter->save();
+                    self::addDemeritPoint($failedTask->submitter);
 
                     throw new \Exception('This task is blacklisted and cannot be submitted.');
                 }
@@ -141,5 +120,18 @@ class TaskService
 
             throw $exception;
         }
+    }
+
+    private static function addDemeritPoint($submitter)
+    {
+        $submitter->demerit_points += 1;
+
+        if ($submitter->demerit_points % 3 === 0) {
+            $submitter->status = 'BLOCKED';
+            $submitter->blocked_until = Carbon::now()->addDays(90);
+            Auth::logout();
+        }
+
+        $submitter->save();
     }
 }
