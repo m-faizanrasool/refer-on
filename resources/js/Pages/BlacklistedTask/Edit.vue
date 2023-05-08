@@ -11,8 +11,8 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 let blacklistedTask = computed(() => usePage().props.blacklistedTask);
 
 const form = useForm({
-    key: blacklistedTask.value.key,
-    brand: blacklistedTask.value.brand.name,
+    code: blacklistedTask.value.code,
+    brand: blacklistedTask.value.brand_key,
     country_id: blacklistedTask.value.country_id,
 });
 
@@ -39,13 +39,13 @@ const submit = () => {
                     id="task"
                     type="text"
                     class="block w-full mt-1"
-                    v-model="form.key"
+                    v-model="form.code"
                     required
                     autofocus
                     autocomplete="username"
                 />
 
-                <InputError class="mt-2" :message="form.errors.key" />
+                <InputError class="mt-2 ml-2" :message="form.errors.code" />
             </div>
 
             <div class="mt-4">
