@@ -24,8 +24,6 @@ class CreateBrandsTable extends Migration
             $table->integer('executor_credits')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
-            $table->unique(['name', 'country_id']);
         });
     }
 

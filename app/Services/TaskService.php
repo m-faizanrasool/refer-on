@@ -51,6 +51,18 @@ class TaskService
         ])->save();
     }
 
+    private static function addDemeritPoint($submitter)
+    {
+        $submitter->demerit_points += 1;
+
+        if ($submitter->demerit_points % 3 === 0) {
+            $submitter->status = 'BLOCKED';
+            $submitter->blocked_until = Carbon::now()->addDays(90);
+        }
+
+        $submitter->save();
+    }
+
     public static function reportInvalid(int $id, ?int $executor_id = null)
     {
         $task = Task::findOrFail($id);
@@ -98,7 +110,7 @@ class TaskService
             if ($code) {
                 $isblacklistedTask = self::isBlacklisted($code, $brand_id);
 
-                if ($isblacklistedTask) {
+                if ($isblacklistedTask && $parent_id) {
                     $task = Task::findOrFail($parent_id);
 
                     $failedTask = Task::create([
@@ -109,7 +121,9 @@ class TaskService
                     ]);
 
                     self::addDemeritPoint($failedTask->submitter);
+                }
 
+                if ($isblacklistedTask) {
                     throw new \Exception('This task is blacklisted and cannot be submitted.');
                 }
             }
@@ -120,18 +134,5 @@ class TaskService
 
             throw $exception;
         }
-    }
-
-    private static function addDemeritPoint($submitter)
-    {
-        $submitter->demerit_points += 1;
-
-        if ($submitter->demerit_points % 3 === 0) {
-            $submitter->status = 'BLOCKED';
-            $submitter->blocked_until = Carbon::now()->addDays(90);
-            Auth::logout();
-        }
-
-        $submitter->save();
     }
 }

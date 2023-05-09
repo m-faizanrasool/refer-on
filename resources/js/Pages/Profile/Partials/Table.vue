@@ -12,8 +12,8 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    auth: {
-        type: Object,
+    authId: {
+        type: Number,
         required: true,
     },
     taskType: {
@@ -26,33 +26,48 @@ const search = ref("");
 const sortBy = ref("formatted_created_at");
 const sortTasksDesc = ref(true);
 
-const tableHeaders = {
-    country_name: "Country",
-    formatted_created_at: "Date",
-    brand_name: "Brand",
-    submitter_name: "Submitter",
-    key: "task",
-    executor_name: "Executor",
-    submitter_credits: "Earnings",
-    status: "Status",
-    submitter_demerit_points: "DEMERIT POINTS",
-};
+let tableHeaders;
+
+if (props.taskType === "submitter") {
+    tableHeaders = {
+        country_name: "Country",
+        formatted_created_at: "Date",
+        brand_name: "Brand",
+        submitter_name: "Submitter",
+        code: "task",
+        executor_name: "Executor",
+        submitter_credits: "Earnings",
+        status: "Status",
+        demerit_points: "Demerit Points",
+    };
+} else {
+    tableHeaders = {
+        country_name: "Country",
+        formatted_created_at: "Date",
+        brand_name: "Brand",
+        submitter_name: "Submitter",
+        code: "task",
+        executor_name: "Executor",
+        executor_credits: "Earnings",
+        status: "Status",
+        demerit_points: "Demerit Points",
+    };
+}
 
 const filterTasks = (searchValue, userId) => {
     return props.tasks.filter((task) => {
         const searchLower = searchValue.toLowerCase();
 
         const fieldsToSearch = [
-            // task.brand.country_id,
-            task.formatted_created_at,
-            task.brand.name,
-            task.submitter.username,
+            task.country_name,
+            task.brand_name,
+            task.submitter_name,
             task.code,
-            task.status,
+            task.submitter_name,
         ];
 
         if (task.executor) {
-            fieldsToSearch.push(task.executor.username);
+            fieldsToSearch.push(task.executor_name);
         }
 
         let taskUserId;
@@ -95,11 +110,7 @@ const sortTasks = (tasks) => {
 };
 
 const Tasks = computed(() => {
-    let filteredTasks = filterTasks(
-        search.value,
-        props.auth.user.id,
-        props.taskType
-    );
+    let filteredTasks = filterTasks(search.value, props.authId, props.taskType);
     return sortTasks(filteredTasks);
 });
 
@@ -235,7 +246,7 @@ const updateTaskStatus = (status, task_id, canDispute) => {
         </div>
 
         <div class="flex table-head" v-for="task in Tasks" :key="task.id">
-            <div>{{ task.brand.country_id }}</div>
+            <div>{{ task.country_name }}</div>
             <div>{{ task.formatted_created_at }}</div>
             <div>{{ task.brand.name }}</div>
             <div>{{ task.submitter.username }}</div>
@@ -244,8 +255,8 @@ const updateTaskStatus = (status, task_id, canDispute) => {
             <div>
                 ${{
                     taskType == "submitter"
-                        ? task.brand.submitter_credits
-                        : task.brand.executor_credits
+                        ? task.submitter_credits
+                        : task.executor_credits
                 }}
             </div>
 
@@ -309,7 +320,7 @@ const updateTaskStatus = (status, task_id, canDispute) => {
                 </div>
             </div>
 
-            <div>{{ task.demerit_point }}</div>
+            <div>{{ task.demerit_points }}</div>
         </div>
     </div>
 </template>

@@ -42,11 +42,10 @@ class TaskController extends Controller
             'website' => ['required', 'string'],
             'submitter_credits' => ['required', 'numeric'],
             'executor_credits' => ['required', 'numeric'],
-            'code' => ['required', 'string', new UniqueKeyRule],
+            'code' => ['required', 'string'],
             'summary' => ['required', 'string'],
         ], [
             'brand.unique' => 'The :attribute name already exists.',
-            'task.unique' => 'This code already exists.'
         ]);
 
         // create brand
@@ -135,25 +134,25 @@ class TaskController extends Controller
     public function complete(Request $request)
     {
         $validatedData = $request->validate([
-            'code' => ['required', 'string', new UniqueKeyRule],
+            'code' => ['required', 'string'],
             'task_id' => ['required', 'numeric'],
         ]);
 
-        $task = Task::findOrFail($validatedData['task_id']);
+        $parentTask = Task::findOrFail($validatedData['task_id']);
 
         try {
-            TaskService::validate($task->brand_id, $validatedData['code'], $task->id);
+            TaskService::validate($parentTask->brand_id, $validatedData['code'], $parentTask->id);
 
             $newTask = Task::create([
                 'code' => $validatedData['code'],
-                'brand_id' => $task->brand_id,
-                'parent_id' => $task->id,
+                'brand_id' => $parentTask->brand_id,
+                'parent_id' => $parentTask->id,
                 'submitter_id' => Auth::id(),
             ]);
 
             return redirect()->route('task.created', $newTask->id);
         } catch (\Throwable $e) {
-            return redirect()->route('home')->with('error', $e->getMessage());
+            return redirect()->route('task.show', $parentTask->id)->with('error', $e->getMessage());
         }
     }
 
@@ -209,6 +208,6 @@ class TaskController extends Controller
             return redirect()->route('task.index');
         }
 
-        return redirect()->route('task.index')->with('error', 'Cannot delete task');
+        return redirect()->route('task.index')->with('error', 'Cannot delete task.');
     }
 }

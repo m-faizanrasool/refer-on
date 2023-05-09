@@ -78,6 +78,23 @@ const complete = () => {
                     <InputError class="mt-2" :message="form.errors.code" />
                 </div>
 
+                <!--
+                <div
+                    class="ml-2 font-medium text-red-500"
+                    v-if="$page.props.flash.error"
+                >
+                    <div v-if="$page.props.flash.error.includes('blacklisted')">
+                        You have submitted a Blacklisted code.<br />
+                        You will receive 1 demerit point. <br />
+                        Violation of our Terms shall lead to suspension or
+                        termination.
+                    </div>
+
+                    <div v-else>
+                        {{ $page.props.flash.error }}
+                    </div>
+                </div> -->
+
                 <div class="flex justify-end my-4 md:px-4">
                     <button class="btn btn-primary" @click="complete">
                         Proceed to post

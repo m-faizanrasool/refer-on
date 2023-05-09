@@ -67,10 +67,17 @@ defineProps({
                         <div class="text-[20px] truncate">{{ user.phone }}</div>
                     </div>
 
-                    <div class="max-w-[2500px]">
+                    <div class="max-w-[250px]">
                         <div class="font-bold">Email</div>
                         <div class="text-[20px] truncate">
                             {{ user.email }}
+                        </div>
+                    </div>
+
+                    <div class="max-w-[250px]">
+                        <div class="font-bold">Status</div>
+                        <div class="text-[20px] truncate">
+                            {{ user.status }}
                         </div>
                     </div>
                 </div>

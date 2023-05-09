@@ -54,7 +54,13 @@ class ProfileController extends Controller
         })->get();
 
         $formattedTasks = $tasks->map(function ($task) {
-            $task->demerit_point = $task->status == "INVALID" || $task->status == 'BLACKLISTED' ? 1 : "";
+            $task->submitter_name = $task->submitter->username;
+            $task->executor_name =  $task->executor ? $task->executor->username : "";
+            $task->brand_name = $task->brand->name;
+            $task->country_name = $task->brand->country_name;
+            $task->submitter_credits = $task->executor ? $task->brand->submitter_credits : 0;
+            $task->executor_credits =  $task->brand->executor_credits;
+            $task->demerit_points = $task->status == "INVALID" || $task->status == 'BLACKLISTED' ? 1 : 0;
             $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
             $task->can_dispute = ($task->fulfilled_at && Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15);
             return $task;
@@ -64,6 +70,7 @@ class ProfileController extends Controller
         $tasksFulfilledByOthers = $formattedTasks->where('submitter_id', $user->id)->whereNotNull('executor_id');
 
         return Inertia::render('Profile/Detail', [
+            'authId' => $user->id,
             'fulfilledTasks' => $fulfilledTasks->count(),
             'fulfilledTasksEarnings' => $fulfilledTasks->pluck('brand.executor_credits')->sum(),
             'tasksFulfilledByOthers' => $tasksFulfilledByOthers->count(),

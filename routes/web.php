@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StaticPageController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\CheckUserStatus;
 use App\Http\Middleware\IsAdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -27,7 +28,7 @@ Route::get('how-it-works', [StaticPageController::class, 'howitworks'])->name('h
 Route::get('privacy-policy', [StaticPageController::class, 'privacypolicy'])->name('privacypolicy');
 Route::get('term-of-use', [StaticPageController::class, 'termofuse'])->name('termofuse');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::get('profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('profile/detail/{user_id?}', [ProfileController::class, 'detail'])->name('profile.detail');
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');

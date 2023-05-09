@@ -37,13 +37,6 @@ const submit = () => {
 
         <div class="px-8 py-6 bg-gray-200 rounded-md">
             <div class="mx-auto space-y-4 sm:w-1/2">
-                <div
-                    class="ml-2 font-medium text-red-500"
-                    v-if="$page.props.flash.error"
-                >
-                    {{ $page.props.flash.error }}
-                </div>
-
                 <div>
                     <InputLabel
                         class="text-lg !font-bold"
@@ -196,6 +189,13 @@ const submit = () => {
                         class="!mt-1.5 ml-2"
                         :message="form.errors.code"
                     />
+                </div>
+
+                <div
+                    class="ml-2 font-medium text-red-500"
+                    v-if="$page.props.flash.error"
+                >
+                    {{ $page.props.flash.error }}
                 </div>
 
                 <div class="flex justify-end">

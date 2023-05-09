@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Brand extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -19,6 +20,11 @@ class Brand extends Model
         'executor_credits',
     ];
 
+    public function getCountryNameAttribute()
+    {
+        return $this->country->name;
+    }
+
     public function getNameAttribute($value)
     {
         return ucfirst($value);
@@ -27,6 +33,11 @@ class Brand extends Model
     public function blacklistedTasks()
     {
         return $this->hasMany(BlacklistedTasks::class);
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
     }
 
     public function tasks()

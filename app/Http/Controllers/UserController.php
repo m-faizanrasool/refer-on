@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -13,9 +14,11 @@ class UserController extends Controller
         $user =
             User::orderByDesc('id')->when($request->search, function ($query, $search) {
                 $query->where('username', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%")
-                 ->orWhere('phone', 'like', "%{$search}%");
-            })->paginate(10);
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            })
+            ->where('id', '!=', Auth::id()) // Exclude current logged-in user
+            ->paginate(10);
 
         return Inertia::render(
             'User/Index',

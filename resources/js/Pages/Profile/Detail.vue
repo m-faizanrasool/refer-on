@@ -2,11 +2,11 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import TextInput from "@/Components/TextInput.vue";
 import Table from "@/Pages/Profile/Partials/Table.vue";
-import { Head, usePage } from "@inertiajs/vue3";
-
-const props = usePage().props;
+import { Head } from "@inertiajs/vue3";
 
 defineProps({
+    authId: Number,
+    tasks: Object,
     fulfilledTasks: Number,
     fulfilledTasksEarnings: Number,
     tasksFulfilledByOthers: Number,
@@ -44,11 +44,7 @@ defineProps({
                     </div>
                 </div>
 
-                <Table
-                    :tasks="props.tasks"
-                    :auth="props.auth"
-                    task-type="executor"
-                />
+                <Table :tasks="tasks" :auth-id="authId" task-type="executor" />
             </div>
 
             <div>
@@ -74,11 +70,7 @@ defineProps({
                     </div>
                 </div>
 
-                <Table
-                    :tasks="props.tasks"
-                    :auth="props.auth"
-                    task-type="submitter"
-                />
+                <Table :tasks="tasks" :auth-id="authId" task-type="submitter" />
             </div>
         </div>
     </AppLayout>

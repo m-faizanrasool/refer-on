@@ -47,7 +47,9 @@ defineExpose({
                     <nav class="mx-4 text-white">
                         <ul>
                             <li class="sidebar-item">
-                                <Link :href="route('task.index')">Tasks</Link>
+                                <Link :href="route('task.index')"
+                                    >Your Tasks</Link
+                                >
                             </li>
 
                             <div v-if="$page.props.auth.user.is_admin">

@@ -20,14 +20,14 @@ class CheckUserStatus
     {
         $user = Auth::user();
 
-        if ($user->status === 'blocked') {
+        if ($user->status === 'BLOCKED') {
             $blockedUntil = Carbon::parse($user->blocked_until);
 
             Auth::logout();
-            return redirect()->route('login')->with('error', 'Your account has been blocked until' + $blockedUntil->format('d-m-Y') + '.');
+            return redirect()->route('login')->with('error', 'Your account has been blocked until ' . $blockedUntil->format('d-m-Y') . '.');
         }
 
-        if ($user->status === 'permanently_blocked') {
+        if ($user->status === 'PERMANENTLY_BLOCKED') {
             Auth::logout();
             return redirect()->route('login')->with('error', 'Your account has been permanently blocked.');
         }
