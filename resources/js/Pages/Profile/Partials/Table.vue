@@ -196,10 +196,16 @@ const updateTaskStatus = (status, task_id, canDispute) => {
         return;
     }
 
-    router.patch(route("task.updateStatus"), {
-        task_id,
-        status,
-    });
+    router.patch(
+        route("task.updateStatus"),
+        {
+            task_id,
+            status,
+        },
+        {
+            preserveState: true,
+        }
+    );
 };
 </script>
 

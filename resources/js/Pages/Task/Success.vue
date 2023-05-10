@@ -48,7 +48,7 @@ defineProps({
 
             <div class="flex flex-col items-center p-8">
                 <div>
-                    <img src="images/logo_default.svg" alt="" />
+                    <img src="images/logo_default.svg" alt="logo_default" />
                 </div>
 
                 <a

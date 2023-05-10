@@ -20,8 +20,7 @@ const form = useForm({
 
 const submit = () => {
     form.post(route("task.store"), {
-        preserveScroll: true,
-        wantsJson: true,
+        preserveState: true,
         onSuccess: (ad) => {
             console.log(ad);
         },

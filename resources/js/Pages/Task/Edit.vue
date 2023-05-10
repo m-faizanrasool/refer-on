@@ -21,7 +21,7 @@ const form = useForm({
 
 const submit = () => {
     form.patch(route("task.update", props.task.id), {
-        preserveScroll: true,
+        preserveState: true,
     });
 };
 </script>
