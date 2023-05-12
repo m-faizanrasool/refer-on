@@ -97,8 +97,23 @@ class TaskController extends Controller
             return redirect()->route('home')->with('error', 'You cannot fulfill your own task');
         }
 
-        if ($task->executor_id && $task->executor_id !== $authId || count($task->childs) > 1) {
-            return redirect()->route('home')->with('error', 'Task already fulfilled');
+        if (($task->executor_id && $task->executor_id !== $authId || count($task->childs) > 1) && $task->status != 'AVAILABLE') {
+            try {
+                TaskService::validate($task->brand_id);
+                // create a new task as a sibling for concurrent user to complete
+                $task = Task::create([
+                    'sibling_id' => $task->id,
+                    'code' => $task->code,
+                    'brand_id' => $task->brand_id,
+                    'submitter_id' => $task->submitter_id,
+                    'executor_id' => $authId,
+                    'status' => 'PENDING_VERIFICATION',
+                    'fulfilled_at' => Carbon::now()
+                ]);
+            } catch (\Throwable $e) {
+                return redirect()->route('home')->with('error', $e->getMessage());
+            }
+            return inertia('Task/Fulfill', compact('task'));
         }
 
         try {

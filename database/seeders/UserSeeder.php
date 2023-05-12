@@ -33,5 +33,15 @@ class UserSeeder extends Seeder
             "phone" => '+923001234567',
             "password" => 'client',
         ]);
+
+        User::create([
+           "id" => 3,
+           "is_admin" => false,
+           "country_id" => 148,
+           "username" => 'client_b',
+           "email" => 'client_b@referon.com',
+           "phone" => '+923001234568',
+           "password" => 'client',
+        ]);
     }
 }

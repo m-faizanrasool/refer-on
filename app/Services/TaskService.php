@@ -44,11 +44,15 @@ class TaskService
     {
         $task = Task::findOrFail($id);
 
-        $task->fill([
-            'executor_id' => null,
-            'fulfilled_at' => null,
-            'status' => 'AVAILABLE',
-        ])->save();
+        if ($task->sibling_id) {
+            $task->delete();
+        } else {
+            $task->fill([
+                'executor_id' => null,
+                'fulfilled_at' => null,
+                'status' => 'AVAILABLE',
+            ])->save();
+        }
     }
 
     private static function addDemeritPoint($submitter)
