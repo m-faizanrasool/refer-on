@@ -50,6 +50,7 @@ Route::middleware(['auth', CheckUserStatus::class])->group(function () {
     Route::middleware([IsAdminMiddleware::class])->group(function () {
         Route::get('user', [UserController::class, 'index'])->name('user.index');
         Route::get('user/block/{user_id}', [UserController::class, 'block'])->name('user.block');
+        Route::get('user/unblock/{user_id}', [UserController::class, 'unblock'])->name('user.unblock');
 
         Route::resources([
             'blacklisted-tasks' => BlacklistedTaskController::class,

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -32,9 +33,21 @@ class UserController extends Controller
     {
         $user = User::findOrFail($user_id);
 
-        $user->status = "PERMANENTLY_BLOCKED";
+        $user->status = 'BLOCKED';
+        $user->blocked_until = Carbon::now()->addDays(90);
         $user->save();
 
         return redirect()->route('user.index')->with('message', 'Successfully blocked user');
+    }
+
+    public function unblock($user_id)
+    {
+        $user = User::findOrFail($user_id);
+
+        $user->status = "ACTIVE";
+        $user->blocked_until = null;
+        $user->save();
+
+        return redirect()->route('user.index')->with('message', 'Successfully unblocked user');
     }
 }

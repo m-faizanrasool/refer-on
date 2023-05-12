@@ -58,16 +58,16 @@ class ProfileController extends Controller
             $task->executor_name =  $task->executor ? $task->executor->username : "";
             $task->brand_name = $task->brand->name;
             $task->country_name = $task->brand->country_name;
-            $task->submitter_credits = $task->executor ? $task->brand->submitter_credits : 0;
-            $task->executor_credits =  $task->brand->executor_credits;
+            $task->submitter_credits = $task->executor && !in_array($task->status, ['INVALID', 'BLACKLISTED']) ? $task->brand->submitter_credits : 0;
+            $task->executor_credits =  !in_array($task->status, ['INVALID', 'BLACKLISTED']) ? $task->brand->executor_credits : 0;
             $task->demerit_points = $task->status == "INVALID" || $task->status == 'BLACKLISTED' ? 1 : 0;
             $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
             $task->can_dispute = ($task->fulfilled_at && Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15);
             return $task;
         });
 
-        $fulfilledTasks = $formattedTasks->where('executor_id', $user->id);
-        $tasksFulfilledByOthers = $formattedTasks->where('submitter_id', $user->id)->whereNotNull('executor_id');
+        $fulfilledTasks = $formattedTasks->where('executor_id', $user->id)->whereNotIn('status', ['INVALID', 'BLACKLISTED']);
+        $tasksFulfilledByOthers = $formattedTasks->where('submitter_id', $user->id)->whereNotIn('status', ['INVALID', 'BLACKLISTED'])->whereNotNull('executor_id');
 
         return Inertia::render('Profile/Detail', [
             'authId' => $user->id,

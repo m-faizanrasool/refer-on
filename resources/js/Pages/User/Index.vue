@@ -53,25 +53,18 @@ defineProps({
                 v-for="user in users.data"
             >
                 <div
-                    class="flex flex-col gap-3 mb-4 lg:gap-12 lg:flex-row lg:mb-0"
+                    class="flex flex-col gap-3 mb-4 lg:gap-8 lg:flex-row lg:mb-0"
                 >
-                    <div class="max-w-[120px]">
+                    <div class="max-w-[120px] min-w-[100px]">
                         <div class="font-bold">Name</div>
                         <div class="text-[20px] truncate">
                             {{ user.username }}
                         </div>
                     </div>
 
-                    <div class="max-w-[250px]">
+                    <div class="max-w-[250px] min-w-[150px]">
                         <div class="font-bold">Phone</div>
                         <div class="text-[20px] truncate">{{ user.phone }}</div>
-                    </div>
-
-                    <div class="max-w-[250px]">
-                        <div class="font-bold">Email</div>
-                        <div class="text-[20px] truncate">
-                            {{ user.email }}
-                        </div>
                     </div>
 
                     <div class="max-w-[250px]">
@@ -85,7 +78,7 @@ defineProps({
                 <div>
                     <div class="flex gap-4">
                         <Link
-                            class="btn btn-success"
+                            class="btn btn-primary"
                             :href="route('profile.detail', user.id)"
                         >
                             Detail
@@ -93,10 +86,22 @@ defineProps({
 
                         <Link
                             class="text-white btn btn-danger"
-                            onclick="return confirm('Are you sure you want to permanently block the user?')"
+                            as="button"
+                            onclick="return confirm('Are you sure you want to block this user for 90days?')"
                             :href="route('user.block', user.id)"
+                            v-if="user.status !== 'BLOCKED'"
                         >
                             Block
+                        </Link>
+
+                        <Link
+                            class="text-white btn btn-success"
+                            as="button"
+                            onclick="return confirm('Are you sure you want to unblock this user?')"
+                            :href="route('user.unblock', user.id)"
+                            v-if="user.status === 'BLOCKED'"
+                        >
+                            Unblock
                         </Link>
                     </div>
                 </div>
