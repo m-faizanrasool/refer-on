@@ -55,7 +55,7 @@ defineProps({
                     class="my-2 text-xl hover:underline"
                     :href="task.brand.website"
                     target="_blank"
-                    >{{ task.website }}</a
+                    >{{ task.brand.website }}</a
                 >
 
                 <p class="text-xl">
