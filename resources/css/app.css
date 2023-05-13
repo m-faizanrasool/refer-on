@@ -108,6 +108,14 @@
         @apply bg-[#e8ecf4];
     }
 
+    .table-head :nth-child(1),
+    .table-head :nth-child(2),
+    .table-head :nth-child(3),
+    .table-head :nth-child(7),
+    .table-head :nth-child(9) {
+        @apply !min-w-[110px];
+    }
+
     .text-spaced {
         @apply tracking-[0.3em] md:left-0;
     }
