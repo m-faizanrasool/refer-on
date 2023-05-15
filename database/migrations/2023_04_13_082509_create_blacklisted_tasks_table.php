@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedSmallInteger('country_id')->index();
             $table->string('code')->index();
+            $table->string('brand_name')->index();
             $table->string('brand_key')->index();
             $table->string('source')->nullable();
             $table->timestamps();

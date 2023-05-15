@@ -34,7 +34,7 @@ if (props.taskType === "submitter") {
         formatted_created_at: "Date",
         brand_name: "Brand",
         submitter_name: "Submitter",
-        code: "task",
+        code: "Code",
         executor_name: "Executor",
         submitter_credits: "Earnings",
         status: "Status",
@@ -46,7 +46,7 @@ if (props.taskType === "submitter") {
         formatted_created_at: "Date",
         brand_name: "Brand",
         submitter_name: "Submitter",
-        code: "task",
+        code: "Code",
         executor_name: "Executor",
         executor_credits: "Earnings",
         status: "Status",
@@ -126,9 +126,9 @@ const statusesExecutor = [
         class: "text-blue-600",
     },
     { label: "Verified by you", value: "VERIFIED", class: "text-green-600" },
-    { label: "Disputed by you", value: "DISPUTED", class: "text-green-600" },
+    { label: "Disputed by you", value: "DISPUTED", class: "text-red-400" },
     {
-        label: "Executor user claimed your task is invalid",
+        label: "Invalid code",
         value: "INVALID",
         class: "text-red-400",
     },
@@ -158,10 +158,10 @@ const statusesSubmitter = [
     {
         label: "Disputed by Submitter",
         value: "DISPUTED",
-        class: "text-green-400",
+        class: "text-red-400",
     },
     {
-        label: "You claimed task is invalid",
+        label: "Invalid code",
         value: "INVALID",
         class: "text-red-400",
     },
@@ -175,21 +175,20 @@ const filterStatus = (status) => {
             (option) =>
                 option.value === "VERIFIED" || option.value === "DISPUTED"
         );
-    } else if (status === "VERIFIED") {
-        filteredStatus = statusesExecutor.filter(
-            (option) => option.value === "DISPUTED"
-        );
     }
 
     return filteredStatus;
 };
 
 const updateTaskStatus = (status, task_id, canDispute) => {
+    const message =
+        "Brands may need some time to process the referral codes. Please wait 15 days before checking with them, and then submit a dispute if necessary.";
+
     if (status === "DISPUTED" && !canDispute) {
         Toastify({
-            text: "Task must be open for at least 15 days before it can be disputed.",
+            text: message,
             className: "toastify-error",
-            duration: 3000,
+            duration: 10000,
             close: true,
             stopOnFocus: true,
         }).showToast();
@@ -228,7 +227,7 @@ const updateTaskStatus = (status, task_id, canDispute) => {
                     sortTasksDesc = !sortTasksDesc;
                 "
                 class="flex items-center gap-1 cursor-pointer"
-                :class="key === 'status' ? '!min-w-[200px]' : ''"
+                :class="key === 'status' ? '!min-w-[180px]' : ''"
             >
                 <span v-text="name" class="mt-1"></span>
 
@@ -266,7 +265,7 @@ const updateTaskStatus = (status, task_id, canDispute) => {
                 }}
             </div>
 
-            <div class="!min-w-[200px]">
+            <div class="!min-w-[180px]">
                 <div v-if="taskType === 'executor'">
                     <span
                         :class="
@@ -286,6 +285,7 @@ const updateTaskStatus = (status, task_id, canDispute) => {
                     <template
                         v-if="
                             task.status === 'AVAILABLE' ||
+                            task.status === 'VERIFIED' ||
                             task.status === 'DISPUTED' ||
                             task.status === 'INVALID' ||
                             task.status === 'BLACKLISTED'

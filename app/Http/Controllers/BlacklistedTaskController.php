@@ -11,12 +11,24 @@ use Illuminate\Support\Str;
 
 class BlacklistedTaskController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $blacklistedTask = BlacklistedTasks::with(['country'])->latest()->get();
+        $query = BlacklistedTasks::with('country')->orderByDesc('id');
+
+        if ($request->search) {
+            $query->where(function ($innerQuery) use ($request) {
+                $innerQuery->where('code', 'like', "%{$request->search}%")
+                    ->orWhere('brand_name', 'like', "%{$request->search}%")
+                    ->orWhereHas('country', function ($countryQuery) use ($request) {
+                        $countryQuery->where('name', 'like', "%{$request->search}%");
+                    });
+            });
+        }
+
+        $blacklistedTasks = $query->paginate(2);
 
         return Inertia::render('BlacklistedTask/Index', [
-            'blacklistedTask' => $blacklistedTask,
+            'blacklistedTasks' => $blacklistedTasks,
         ]);
     }
 
@@ -41,12 +53,13 @@ class BlacklistedTaskController extends Controller
             'country_id' => 'required',
         ],
             [
-                'code.unique' => 'This Code is already blacklisted for this brand and country',
+                'code.unique' => 'This code is already blacklisted for this brand and country',
             ]
         );
 
         BlacklistedTasks::create([
             'code' => $validatedData['code'],
+            'brand_name' => $validatedData['brand'],
             'brand_key' => Str::lower(str_replace(' ', '_', $validatedData['brand'])),
             'country_id' => $validatedData['country_id'],
         ]);
@@ -84,7 +97,7 @@ class BlacklistedTaskController extends Controller
             'country_id' => 'required',
         ],
             [
-                'code.unique' => 'This task is already blacklisted for this country',
+                'code.unique' => 'This code is already blacklisted for this country',
             ]
         );
 
@@ -92,6 +105,7 @@ class BlacklistedTaskController extends Controller
 
         $blacklistedTask->update([
             'code' => $validatedData['code'],
+            'brand_name' => $validatedData['brand'],
             'brand_key' => Str::lower(str_replace(' ', '_', $validatedData['brand'])),
             'country_id' => $validatedData['country_id'],
         ]);

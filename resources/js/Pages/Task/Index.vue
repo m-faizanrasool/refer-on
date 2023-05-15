@@ -47,6 +47,13 @@ defineProps({
                         </div>
                     </div>
 
+                    <div class="max-w-[250px] min-w-[100px]">
+                        <div class="font-bold">Brand</div>
+                        <div class="text-lg truncate">
+                            {{ task.brand_name }}
+                        </div>
+                    </div>
+
                     <div class="max-w-[120px] min-w-[100px]">
                         <div class="font-bold">Code</div>
                         <div class="text-lg truncate">{{ task.code }}</div>
@@ -56,13 +63,6 @@ defineProps({
                         <div class="font-bold">Status</div>
                         <div class="text-lg truncate">
                             {{ task.status }}
-                        </div>
-                    </div>
-
-                    <div class="max-w-[250px]">
-                        <div class="font-bold">Brand</div>
-                        <div class="text-lg truncate">
-                            {{ task.brand_name }}
                         </div>
                     </div>
                 </div>

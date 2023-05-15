@@ -6,6 +6,14 @@ import { Head } from "@inertiajs/vue3";
 defineProps({
     task: Object,
 });
+
+const getFullWebsiteUrl = (website) => {
+    if (website.startsWith("http://") || website.startsWith("https://")) {
+        return website;
+    } else {
+        return "http://" + website;
+    }
+};
 </script>
 
 <template>
@@ -48,12 +56,12 @@ defineProps({
 
             <div class="flex flex-col items-center p-8">
                 <div>
-                    <img src="images/logo_default.svg" alt="logo_default" />
+                    <img src="images/logo_default.svg" alt="logo default" />
                 </div>
 
                 <a
                     class="my-2 text-xl hover:underline"
-                    :href="task.brand.website"
+                    :href="getFullWebsiteUrl(task.brand.website)"
                     target="_blank"
                     >{{ task.brand.website }}</a
                 >

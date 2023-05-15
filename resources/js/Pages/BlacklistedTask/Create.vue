@@ -32,19 +32,25 @@ const submit = () => {
 
         <form @submit.prevent="submit" class="mx-auto sm:w-3/5">
             <div>
-                <InputLabel for="task-code" value="Code" class="!font-bold" />
+                <InputLabel for="country" value="Country" class="!font-bold" />
 
-                <TextInput
-                    id="task-code"
-                    type="text"
-                    class="block w-full mt-1"
-                    v-model="form.code"
-                    placeholder="netflix_block"
+                <select
+                    id="country"
+                    v-model="form.country_id"
                     required
-                    autofocus
-                />
+                    class="w-full pl-4 mt-1 border-gray-300 shadow-md rounded-3xl"
+                >
+                    <option value="" disabled>Select a country</option>
+                    <option
+                        v-for="country in countries"
+                        :key="country.id"
+                        :value="country.id"
+                    >
+                        {{ country.name }}
+                    </option>
+                </select>
 
-                <InputError class="mt-2" :message="form.errors.code" />
+                <InputError class="mt-2" :message="form.errors.country_id" />
             </div>
 
             <div class="mt-4">
@@ -63,25 +69,19 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="country" value="Country" class="!font-bold" />
+                <InputLabel for="task-code" value="Code" class="!font-bold" />
 
-                <select
-                    id="country"
-                    v-model="form.country_id"
+                <TextInput
+                    id="task-code"
+                    type="text"
+                    class="block w-full mt-1"
+                    v-model="form.code"
+                    placeholder="netflix_block"
                     required
-                    class="w-full pl-4 mt-1 border-gray-300 shadow-xl rounded-3xl"
-                >
-                    <option value="" disabled>Select a country</option>
-                    <option
-                        v-for="country in countries"
-                        :key="country.id"
-                        :value="country.id"
-                    >
-                        {{ country.name }}
-                    </option>
-                </select>
+                    autofocus
+                />
 
-                <InputError class="mt-2" :message="form.errors.country_id" />
+                <InputError class="mt-2" :message="form.errors.code" />
             </div>
 
             <div class="flex justify-end mt-4">

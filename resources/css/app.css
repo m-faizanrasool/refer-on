@@ -86,7 +86,7 @@
     }
 
     .page-heading {
-        @apply text-3xl font-bold leading-tight text-[#575353] mb-6 tracking-wider;
+        @apply text-3xl font-bold leading-tight text-[#575353] mb-6;
     }
 
     .avatar {
@@ -108,11 +108,11 @@
         @apply bg-[#e8ecf4];
     }
 
-    .table-head :nth-child(1),
-    .table-head :nth-child(2),
-    .table-head :nth-child(3),
-    .table-head :nth-child(7),
-    .table-head :nth-child(9) {
+    .table-head > div:nth-child(1),
+    .table-head > div:nth-child(2),
+    .table-head > div:nth-child(3),
+    .table-head > div:nth-child(7),
+    .table-head > div:nth-child(9) {
         @apply !min-w-[110px];
     }
 

@@ -55,16 +55,16 @@ class TaskService
         }
     }
 
-    private static function addDemeritPoint($submitter)
+    public static function addDemeritPoint($user)
     {
-        $submitter->demerit_points += 1;
+        $user->demerit_points += 1;
 
-        if ($submitter->demerit_points % 3 === 0) {
-            $submitter->status = 'BLOCKED';
-            $submitter->blocked_until = Carbon::now()->addDays(90);
+        if ($user->demerit_points % 3 === 0) {
+            $user->status = 'BLOCKED';
+            $user->blocked_until = Carbon::now()->addDays(90);
         }
 
-        $submitter->save();
+        $user->save();
     }
 
     public static function reportInvalid(int $id, ?int $executor_id = null)

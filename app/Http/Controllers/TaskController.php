@@ -6,6 +6,8 @@ use App\Models\Brand;
 use App\Models\Task;
 use App\Providers\RouteServiceProvider;
 use App\Rules\BrandUniqueRule;
+use App\Rules\UniqueKeyRule;
+use App\Rules\ValidUrl;
 use App\Services\TaskService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -37,7 +39,7 @@ class TaskController extends Controller
         $validatedData = $request->validate([
             'country_id' => ['required', 'numeric'],
             'brand' => ['required', 'string', new BrandUniqueRule($request->country_id)],
-            'website' => ['required', 'string'],
+            'website' => ['required', 'string', new ValidUrl],
             'submitter_credits' => ['required', 'numeric'],
             'executor_credits' => ['required', 'numeric'],
             'code' => ['required', 'string'],
@@ -97,7 +99,7 @@ class TaskController extends Controller
             return redirect()->route('home')->with('error', 'You cannot fulfill your own task');
         }
 
-        if (($task->executor_id && $task->executor_id !== $authId || count($task->childs) > 1) && $task->status != 'AVAILABLE') {
+        if (($task->executor_id && $task->executor_id !== $authId) && $task->status != 'AVAILABLE') {
             try {
                 TaskService::validate($task->brand_id);
                 // create a new task as a sibling for concurrent user to complete
@@ -110,14 +112,15 @@ class TaskController extends Controller
                     'status' => 'PENDING_VERIFICATION',
                     'fulfilled_at' => Carbon::now()
                 ]);
+
+                return inertia('Task/Fulfill', compact('task'));
             } catch (\Throwable $e) {
                 return redirect()->route('home')->with('error', $e->getMessage());
             }
-            return inertia('Task/Fulfill', compact('task'));
         }
 
         try {
-            if (!$task->executor_id) {
+            if (!$task->executor_id && !session('error')) {
                 TaskService::validate($task->brand_id);
 
                 $task->update([
@@ -147,7 +150,7 @@ class TaskController extends Controller
     public function complete(Request $request)
     {
         $validatedData = $request->validate([
-            'code' => ['required', 'string'],
+            'code' => ['required', 'string', new UniqueKeyRule],
             'task_id' => ['required', 'numeric'],
         ]);
 
@@ -165,7 +168,7 @@ class TaskController extends Controller
 
             return redirect()->route('task.created', $newTask->id);
         } catch (\Throwable $e) {
-            return redirect()->route('task.show', $parentTask->id)->with('error', $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
@@ -191,6 +194,10 @@ class TaskController extends Controller
 
             $this->checkTaskStatus($task, $validatedData['status']);
 
+            if ($validatedData['status'] === 'DISPUTED') {
+                TaskService::addDemeritPoint($task->executor);
+            }
+
             $task->update([
                 'status' => $validatedData['status'],
             ]);
@@ -206,7 +213,7 @@ class TaskController extends Controller
         switch ($status) {
             case 'DISPUTED':
                 if ($task->fulfilled_at && (Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) < 15)) {
-                    throw new \InvalidArgumentException('Task must be open for at least 15 days before it can be disputed.');
+                    throw new \InvalidArgumentException('Wait 15 days before checking with brands to process referral codes, and submit a dispute if needed.');
                 }
                 break;
         }

@@ -4,11 +4,22 @@ import TextInput from "@/Components/TextInput.vue";
 import { Head, Link, router } from "@inertiajs/vue3";
 
 const reportInvalid = (task_id) => {
-    if (!confirm("Are you sure?")) return;
+    const message =
+        "Kindly confirm with the brand/store if your referral code has been used. Please keep a screenshot/documentary proof of the issue.";
+
+    if (!confirm(message)) return;
 
     router.post(route("task.invalid"), {
         task_id: task_id,
     });
+};
+
+const getFullWebsiteUrl = (website) => {
+    if (website.startsWith("http://") || website.startsWith("https://")) {
+        return website;
+    } else {
+        return "http://" + website;
+    }
 };
 
 defineProps({
@@ -81,12 +92,12 @@ defineProps({
 
             <div class="flex flex-col items-center p-8">
                 <div>
-                    <img src="images/logo_default.svg" alt="" />
+                    <img src="images/logo_default.svg" alt="logo default" />
                 </div>
 
                 <a
                     class="my-2 text-xl hover:underline"
-                    :href="task.brand.website"
+                    :href="getFullWebsiteUrl(task.brand.website)"
                     target="_blank"
                     >{{ task.brand.website }}</a
                 >

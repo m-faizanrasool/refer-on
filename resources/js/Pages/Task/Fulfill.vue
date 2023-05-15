@@ -1,17 +1,23 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import TextInput from "@/Components/TextInput.vue";
-import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
+import { Head, useForm, usePage } from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
-import { ref, computed } from "vue";
-
-const taskCompleted = ref(false);
+import { computed } from "vue";
 
 let task_id = computed(() => usePage().props.task.id);
 
 defineProps({
     task: Object,
 });
+
+const getFullWebsiteUrl = (website) => {
+    if (website.startsWith("http://") || website.startsWith("https://")) {
+        return website;
+    } else {
+        return "http://" + website;
+    }
+};
 
 let form = useForm({
     code: "",
@@ -23,11 +29,9 @@ const complete = () => {
         form.setError("code", "Code field is required");
         return;
     }
+
     form.post(route("task.complete"), {
-        preserveScroll: true,
-        onSuccess: () => {
-            taskCompleted.value = true;
-        },
+        preserveState: true,
     });
 };
 </script>
@@ -78,9 +82,8 @@ const complete = () => {
                     <InputError class="mt-2" :message="form.errors.code" />
                 </div>
 
-                <!--
                 <div
-                    class="ml-2 font-medium text-red-500"
+                    class="font-medium text-red-500"
                     v-if="$page.props.flash.error"
                 >
                     <div v-if="$page.props.flash.error.includes('blacklisted')">
@@ -93,9 +96,12 @@ const complete = () => {
                     <div v-else>
                         {{ $page.props.flash.error }}
                     </div>
-                </div> -->
+                </div>
 
-                <div class="flex justify-end my-4 md:px-4">
+                <div
+                    class="flex justify-end my-4 md:px-4"
+                    v-if="!$page.props.flash.error?.includes('blacklisted')"
+                >
                     <button class="btn btn-primary" @click="complete">
                         Proceed to post
                     </button>
@@ -104,12 +110,12 @@ const complete = () => {
 
             <div class="flex flex-col items-center p-8">
                 <div>
-                    <img src="images/logo_default.svg" alt="" />
+                    <img src="images/logo_default.svg" alt="logo default" />
                 </div>
 
                 <a
                     class="my-2 text-xl hover:underline"
-                    :href="task.brand.website"
+                    :href="getFullWebsiteUrl(task.brand.website)"
                     target="_blank"
                     >{{ task.brand.website }}</a
                 >

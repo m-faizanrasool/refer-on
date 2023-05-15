@@ -21,7 +21,10 @@ const toggleOptions = () => {
 };
 
 const selectOption = (option) => {
-    if (confirm("Are you sure?")) {
+    const message =
+        "Kindly confirm with the brand/store if your referral code has been used. Please keep a screenshot/documentary proof of the issue.";
+
+    if (confirm(message)) {
         showOptions.value = false;
         emit("update:value", option.value);
     }
@@ -38,13 +41,13 @@ const selectOption = (option) => {
                 selectedOption[0].label
             }}</span>
 
-            <span class="w-5 h-5">
+            <span>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="#000"
-                    class="transition-all duration-300"
+                    class="w-5 h-5 transition-all duration-300"
                     v-bind:style="
                         showOptions
                             ? 'transform: rotate(-180deg)'

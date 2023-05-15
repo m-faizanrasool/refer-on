@@ -15,7 +15,7 @@ const form = useForm({
     website: props.task.website,
     submitter_credits: props.task.submitter_credits,
     executor_credits: props.task.executor_credits,
-    task: props.task.key,
+    code: props.task.key,
     summary: props.task.summary,
 });
 
@@ -169,22 +169,22 @@ const submit = () => {
                 <div>
                     <InputLabel
                         class="text-lg !font-bold"
-                        for="task"
+                        for="cpde"
                         value="Your Code"
                     />
 
                     <TextInput
-                        id="task"
+                        id="code"
                         type="text"
                         class="block w-full"
-                        v-model="form.task"
+                        v-model="form.code"
                         placeholder="e.g. netflix_code_123"
                         required
                     />
 
                     <InputError
                         class="!mt-1.5 ml-2"
-                        :message="form.errors.task"
+                        :message="form.errors.code"
                     />
                 </div>
 
