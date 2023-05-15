@@ -49,14 +49,14 @@ class ProfileController extends Controller
             })
             ->get();
 
-        $formattedTasks = $tasks->map(function ($task) use ($auth_user) {
+        $formattedTasks = $tasks->map(function ($task) use ($user) {
             $task->submitter_name = $task->submitter->username;
             $task->executor_name = $task->executor ? $task->executor->username : "";
             $task->brand_name = $task->brand->name;
             $task->country_name = $task->brand->country_name;
             $task->submitter_credits = $task->executor && !in_array($task->status, ['INVALID', 'BLACKLISTED', 'DISPUTED']) ? $task->brand->submitter_credits : 0;
             $task->executor_credits = !in_array($task->status, ['INVALID', 'BLACKLISTED', 'DISPUTED']) ? $task->brand->executor_credits : 0;
-            $task->demerit_points = (($task->status == "INVALID" || $task->status == 'BLACKLISTED') && $task->executor_id !== $auth_user->id) || ($task->status == 'DISPUTED' && $task->executor_id === $auth_user->id) ? 1 : 0;
+            $task->demerit_points = (in_array($task->status, ['INVALID', 'BLACKLISTED']) && $task->executor_id !== $user->id) || ($task->status == 'DISPUTED' && $task->executor_id === $user->id) ? 1 : 0;
             $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
             $task->can_dispute = $task->fulfilled_at && Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15;
             return $task;
