@@ -5,7 +5,7 @@ import { Head, Link, router } from "@inertiajs/vue3";
 
 const reportInvalid = (task_id) => {
     const message =
-        "Kindly confirm with the brand/store if your referral code has been used. Please keep a screenshot/documentary proof of the issue.";
+        "Kindly confirm with the brand/store that the referral code is invalid. Please keep a screenshot/documentary proof of the issue.";
 
     if (!confirm(message)) return;
 
