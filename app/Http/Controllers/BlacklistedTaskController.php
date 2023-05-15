@@ -25,7 +25,7 @@ class BlacklistedTaskController extends Controller
             });
         }
 
-        $blacklistedTasks = $query->paginate(2);
+        $blacklistedTasks = $query->paginate(10);
 
         return Inertia::render('BlacklistedTask/Index', [
             'blacklistedTasks' => $blacklistedTasks,
