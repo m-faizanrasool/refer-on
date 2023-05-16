@@ -38,7 +38,7 @@ const complete = () => {
 
 <template>
     <AppLayout>
-        <Head title="Task" />
+        <Head title="Fulfill Task" />
 
         <div class="grid sm:grid-cols-2">
             <div class="px-8 py-6 bg-gray-200 rounded-md">

@@ -3,6 +3,8 @@ import AppLayout from "../Layouts/AppLayout.vue";
 </script>
 
 <template>
+    <Head title="About Us" />
+
     <AppLayout>
         <div class="page-heading">ABOUT US</div>
 

@@ -15,7 +15,7 @@ defineProps({
 </script>
 
 <template>
-    <Head title="Account" />
+    <Head title="Account Detail" />
 
     <AppLayout>
         <h1 class="page-heading">Account Details</h1>

@@ -26,9 +26,9 @@ const submit = () => {
 
 <template>
     <AppLayout>
-        <Head title="Edit" />
+        <Head title="Create" />
 
-        <h1 class="page-heading">Edit</h1>
+        <h1 class="page-heading">Create</h1>
 
         <form @submit.prevent="submit" class="mx-auto sm:w-3/5">
             <div>

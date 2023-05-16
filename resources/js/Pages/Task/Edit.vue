@@ -27,7 +27,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Create Task" />
+    <Head title="Edit Task" />
 
     <AppLayout>
         <h1 class="page-heading">Update Task</h1>

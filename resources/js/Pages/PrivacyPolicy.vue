@@ -3,6 +3,8 @@ import AppLayout from "../Layouts/AppLayout.vue";
 </script>
 
 <template>
+    <Head title="Privacy Policy" />
+
     <AppLayout>
         <div class="page-heading">DATA PROTECTION NOTICE FOR USERS</div>
 

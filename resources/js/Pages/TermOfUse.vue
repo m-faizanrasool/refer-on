@@ -3,6 +3,8 @@ import AppLayout from "../Layouts/AppLayout.vue";
 </script>
 
 <template>
+    <Head title="Term Of Use" />
+
     <AppLayout>
         <div class="page-heading">Terms of Use</div>
 
