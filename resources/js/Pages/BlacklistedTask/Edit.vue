@@ -19,9 +19,7 @@ const form = useForm({
 const countries = computed(() => usePage().props.countries);
 
 const submit = () => {
-    form.patch(route("blacklisted-tasks.update", blacklistedTask.value.id), {
-        onFinish: () => {},
-    });
+    form.patch(route("blacklisted-tasks.update", blacklistedTask.value.id));
 };
 </script>
 

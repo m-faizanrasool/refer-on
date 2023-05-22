@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\BlackDupTask;
 use App\Models\BlacklistedTasks;
 use App\Models\Brand;
 use App\Models\Task;
@@ -82,7 +83,7 @@ class TaskService
     public static function isDuplicateTask(int $brand_id): void
     {
         $task = Task::where('brand_id', $brand_id)
-            ->whereNotIn('status', ['INVALID', 'BLACKLISTED'])
+            ->whereNotIn('status', ['INVALID'])
             ->where(function ($query) {
                 $query->where('submitter_id', Auth::id())
                     ->orWhere('executor_id', Auth::id());
@@ -94,6 +95,16 @@ class TaskService
         }
     }
 
+    public static function isDuplicateCode($code, $parent_id): bool
+    {
+        $parentTask = Task::findOrFail($parent_id);
+
+        return Task::where('code', $code)
+            ->where('brand_id', $parentTask->brand_id)
+            ->whereNotIn('status', ['INVALID'])
+            ->exists();
+    }
+
     public static function isBlacklisted(string $code, int $brand_id): bool
     {
         return BlacklistedTasks::where([
@@ -103,31 +114,43 @@ class TaskService
         ])->exists();
     }
 
-    /**
-         * @param  \App\Models\Task  $task
-         */
+    public static function createFailedTask($code, $task, $status)
+    {
+        return BlackDupTask::create([
+            'parent_id' => $task->id,
+            'code' => $code,
+            'brand_id' => $task->brand_id,
+            'submitter_id' => Auth::id(),
+            'status' => $status,
+        ]);
+    }
+
     public static function validate($brand_id, $code = null, $parent_id = null)
     {
         try {
             self::isDuplicateTask($brand_id);
 
-            if ($code) {
-                $isblacklistedTask = self::isBlacklisted($code, $brand_id);
+            if ($code && $parent_id) {
+                $isDuplicateCode = self::isDuplicateCode($code, $parent_id);
 
-                if ($isblacklistedTask && $parent_id) {
+                if ($isDuplicateCode) {
                     $task = Task::findOrFail($parent_id);
+                    $failedTask = self::createFailedTask($code, $task, 'DUPLICATE_CODE');
+                    self::addDemeritPoint($failedTask->submitter);
+                    throw new \Exception('Duplicate code.');
+                }
+            }
 
-                    $failedTask = Task::create([
-                        'code' => $code,
-                        'brand_id' => $task->brand_id,
-                        'submitter_id' => Auth::id(),
-                        'status' => 'BLACKLISTED',
-                    ]);
+            if ($code) {
+                $isBlacklistedTask = self::isBlacklisted($code, $brand_id);
 
+                if ($isBlacklistedTask && $parent_id) {
+                    $task = Task::findOrFail($parent_id);
+                    $failedTask = self::createFailedTask($code, $task, 'BLACKLISTED');
                     self::addDemeritPoint($failedTask->submitter);
                 }
 
-                if ($isblacklistedTask) {
+                if ($isBlacklistedTask) {
                     throw new \Exception('This task is blacklisted and cannot be submitted.');
                 }
             }

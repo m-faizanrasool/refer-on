@@ -18,9 +18,7 @@ defineProps({
 });
 
 const submit = () => {
-    form.post(route("blacklisted-tasks.store"), {
-        onFinish: () => {},
-    });
+    form.post(route("blacklisted-tasks.store"));
 };
 </script>
 

@@ -56,4 +56,12 @@ class Task extends Model
     {
         return $this->belongsTo(Brand::class);
     }
+
+    public function scopeForUser($query, $user)
+    {
+        return $query->where(function ($query) use ($user) {
+            $query->where('submitter_id', $user->id)
+                ->orWhere('executor_id', $user->id);
+        });
+    }
 }

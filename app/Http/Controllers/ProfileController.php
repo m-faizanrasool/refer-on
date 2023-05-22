@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\BlackDupTask;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
@@ -24,7 +25,7 @@ class ProfileController extends Controller
             $q->where('executor_id', $user_id)
                 ->orWhere('submitter_id', $user_id);
         })
-        ->whereNotIn('status', ['DISPUTED','INVALID', 'BLACKLISTED'])->get();
+        ->whereNotIn('status', ['DISPUTED','INVALID'])->get();
 
         $fulfilledTasks = $userTasks->where('executor_id', $user_id);
         $tasksFulfilledByOthers = $userTasks->where('submitter_id', $user_id)->whereNotNull('executor_id');
@@ -42,6 +43,20 @@ class ProfileController extends Controller
         $auth_user = Auth::user();
         $user = $auth_user->is_admin && $user_id ? User::findOrFail($user_id) : $auth_user;
 
+        $blackDupTasks = BlackDupTask::with(['submitter'])
+            ->where('submitter_id', $user->id)
+            ->get();
+
+        $formattedBlackDupTasks = $blackDupTasks->map(function ($task) {
+            $task->submitter_name = $task->submitter->username;
+            $task->brand_name = $task->brand->name;
+            $task->country_name = $task->brand->country_name;
+            $task->submitter_credits = 0;
+            $task->demerit_points = 1;
+            $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
+            return $task;
+        });
+
         $tasks = Task::with(['submitter', 'executor'])
             ->where(function ($query) use ($user) {
                 $query->where('submitter_id', $user->id)
@@ -54,29 +69,18 @@ class ProfileController extends Controller
             $task->executor_name = $task->executor ? $task->executor->username : "";
             $task->brand_name = $task->brand->name;
             $task->country_name = $task->brand->country_name;
-            $task->submitter_credits = $task->executor && !in_array($task->status, ['INVALID', 'BLACKLISTED', 'DISPUTED']) ? $task->brand->submitter_credits : 0;
-            $task->executor_credits = !in_array($task->status, ['INVALID', 'BLACKLISTED', 'DISPUTED']) ? $task->brand->executor_credits : 0;
-            $task->demerit_points = (in_array($task->status, ['INVALID', 'BLACKLISTED']) && $task->executor_id !== $user->id) || ($task->status == 'DISPUTED' && $task->executor_id === $user->id) ? 1 : 0;
+            $task->submitter_credits = $task->executor && !in_array($task->status, ['INVALID', 'DISPUTED']) ? $task->brand->submitter_credits : 0;
+            $task->executor_credits = !in_array($task->status, ['INVALID', 'DISPUTED']) ? $task->brand->executor_credits : 0;
+            $task->demerit_points = ($task->status == 'INVALID' && $task->executor_id !== $user->id) || ($task->status == 'DISPUTED' && $task->executor_id === $user->id) ? 1 : 0;
             $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
             $task->can_dispute = $task->fulfilled_at && Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15;
             return $task;
         });
 
-        $fulfilledTasks = $formattedTasks->where('executor_id', $user->id)->whereNotIn('status', ['INVALID', 'BLACKLISTED', 'DISPUTED']);
-        $tasksFulfilledByOthers = $formattedTasks->where('submitter_id', $user->id)->whereNotIn('status', ['DISPUTED', 'INVALID', 'BLACKLISTED'])->whereNotNull('executor_id');
-
-        $fulfilledTasksCount = $fulfilledTasks->count();
-        $fulfilledTasksEarnings = $fulfilledTasks->sum('brand.executor_credits');
-        $tasksFulfilledByOthersCount = $tasksFulfilledByOthers->count();
-        $tasksFulfilledByOthersEarnings = $tasksFulfilledByOthers->sum('brand.submitter_credits');
-
         return Inertia::render('Profile/Detail', [
             'authId' => $user->id,
-            'fulfilledTasks' => $fulfilledTasksCount,
-            'fulfilledTasksEarnings' => $fulfilledTasksEarnings,
-            'tasksFulfilledByOthers' => $tasksFulfilledByOthersCount,
-            'tasksFulfilledByOthersEarnings' => $tasksFulfilledByOthersEarnings,
             'tasks' => $formattedTasks,
+            'blackDupTasks' => $formattedBlackDupTasks,
         ]);
     }
 

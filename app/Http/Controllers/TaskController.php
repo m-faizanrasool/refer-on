@@ -6,7 +6,6 @@ use App\Models\Brand;
 use App\Models\Task;
 use App\Providers\RouteServiceProvider;
 use App\Rules\BrandUniqueRule;
-use App\Rules\UniqueKeyRule;
 use App\Rules\ValidUrl;
 use App\Services\TaskService;
 use Carbon\Carbon;
@@ -79,7 +78,7 @@ class TaskController extends Controller
         $task = Task::with(['submitter', 'brand'])->findOrFail($id);
 
         $alreadyExists = Task::where('brand_id', $task->brand_id)
-        ->whereNotIn('status', ['INVALID', 'BLACKLISTED'])
+        ->whereNotIn('status', ['INVALID'])
         ->where(function ($query) {
             $query->where('submitter_id', Auth::id())
                   ->orWhere('executor_id', Auth::id());
@@ -150,7 +149,7 @@ class TaskController extends Controller
     public function complete(Request $request)
     {
         $validatedData = $request->validate([
-            'code' => ['required', 'string', new UniqueKeyRule],
+            'code' => ['required', 'string'],
             'task_id' => ['required', 'numeric'],
         ]);
 

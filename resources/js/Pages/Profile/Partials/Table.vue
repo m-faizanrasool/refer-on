@@ -66,7 +66,7 @@ const filterTasks = (searchValue, userId) => {
             task.submitter_name,
         ];
 
-        if (task.executor) {
+        if (task?.executor) {
             fieldsToSearch.push(task.executor_name);
         }
 
@@ -133,8 +133,13 @@ const statusesExecutor = [
         class: "text-red-400",
     },
     {
-        label: "You tried to create a blacklisted task",
+        label: "Blacklisted Code",
         value: "BLACKLISTED",
+        class: "text-red-400",
+    },
+    {
+        label: "Duplicate Code",
+        value: "DUPLICATE_CODE",
         class: "text-red-400",
     },
 ];
@@ -256,12 +261,12 @@ const updateTaskStatus = (status, task_id, canDispute) => {
             <div>{{ task.brand.name }}</div>
             <div>{{ task.submitter.username }}</div>
             <div>{{ task.code }}</div>
-            <div>{{ task.executor?.username ?? "" }}</div>
+            <div>{{ task?.executor?.username ?? "" }}</div>
             <div>
                 ${{
                     taskType == "submitter"
                         ? task.submitter_credits
-                        : task.executor_credits
+                        : task?.executor_credits
                 }}
             </div>
 
@@ -282,15 +287,7 @@ const updateTaskStatus = (status, task_id, canDispute) => {
                 </div>
 
                 <div v-if="taskType === 'submitter'">
-                    <template
-                        v-if="
-                            task.status === 'AVAILABLE' ||
-                            task.status === 'VERIFIED' ||
-                            task.status === 'DISPUTED' ||
-                            task.status === 'INVALID' ||
-                            task.status === 'BLACKLISTED'
-                        "
-                    >
+                    <template v-if="task.status !== 'PENDING_VERIFICATION'">
                         <span
                             :class="
                                 statusesExecutor.find(

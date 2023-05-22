@@ -26,7 +26,7 @@ class UniqueKeyRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        $isUnique = Task::where('code', $value)->whereNotIn('status', ['INVALID', 'BLACKLISTED'])->exists();
+        $isUnique = Task::where('code', $value)->whereNotIn('status', ['INVALID'])->exists();
 
         return !$isUnique;
     }

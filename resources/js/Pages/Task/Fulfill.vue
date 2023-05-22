@@ -86,9 +86,25 @@ const complete = () => {
                     class="font-medium text-red-500"
                     v-if="$page.props.flash.error"
                 >
-                    <div v-if="$page.props.flash.error.includes('blacklisted')">
-                        You have submitted a Blacklisted code.<br />
-                        You will receive 1 demerit point. <br />
+                    <div
+                        v-if="
+                            $page.props.flash.error.includes('blacklisted') ||
+                            $page.props.flash.error.includes('Duplicate')
+                        "
+                    >
+                        <template
+                            v-if="
+                                $page.props.flash.error.includes('blacklisted')
+                            "
+                        >
+                            You have submitted a Blacklisted code.<br />
+                        </template>
+
+                        <template v-else>
+                            You have repeated a code from another user.<br />
+                        </template>
+
+                        You will receive 1 demerit point.<br />
                         Violation of our Terms shall lead to suspension or
                         termination.
                     </div>
@@ -100,7 +116,7 @@ const complete = () => {
 
                 <div
                     class="flex justify-end my-4 md:px-4"
-                    v-if="!$page.props.flash.error?.includes('blacklisted')"
+                    v-if="!$page.props.flash.error"
                 >
                     <button class="btn btn-primary" @click="complete">
                         Proceed to post
