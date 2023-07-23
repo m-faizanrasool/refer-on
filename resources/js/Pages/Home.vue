@@ -28,14 +28,6 @@ const searchAvailableTasks = throttle(function () {
     );
 }, 500);
 
-let logos = [
-    { src: "images/logos/adidas.png", alt: "adidas" },
-    { src: "images/logos/amazon.png", alt: "amazon" },
-    { src: "images/logos/ebay.png", alt: "ebay" },
-    { src: "images/logos/nike.png", alt: "nike" },
-    { src: "images/logos/shopee.png", alt: "shopee" },
-];
-
 const breakpoints = {
     320: {
         itemsToShow: 1,
@@ -51,6 +43,7 @@ const breakpoints = {
 defineProps({
     availableTasks: Array,
     quereyParam: String,
+    brands: Array,
 });
 </script>
 
@@ -61,33 +54,19 @@ defineProps({
         <div class="flex flex-col min-h-[62vh] items-center">
             <div class="w-full mb-8 md:w-3/5">
                 <div class="mt-10">
-                    <h1
-                        class="text-4xl font-extrabold text-center page-heading text-spaced"
-                    >
+                    <h1 class="text-4xl font-extrabold text-center page-heading text-spaced">
                         REFERON
                     </h1>
 
-                    <TextInput
-                        type="search"
-                        class="block w-full mt-1 text-lg text-center"
-                        placeholder="Search for brands or stores"
-                        v-model="search"
-                        @keyup.enter="searchAvailableTasks"
-                    />
+                    <TextInput type="search" class="block w-full mt-1 text-lg text-center"
+                        placeholder="Search for brands or stores" v-model="search" @keyup.enter="searchAvailableTasks" />
                 </div>
 
-                <div
-                    class="px-3 py-2 mx-4 mt-2 bg-white divide-y-2 rounded shadow-lg"
-                    v-if="availableTasks.length"
-                >
-                    <Link
-                        v-for="task in availableTasks"
-                        :key="task.id"
-                        :href="route('task.show', task.id)"
-                    >
-                        <div class="py-3 pl-2 rounded hover:bg-gray-200">
-                            {{ task.brand }}
-                        </div>
+                <div class="px-3 py-2 mx-4 mt-2 bg-white divide-y-2 rounded shadow-lg" v-if="availableTasks.length">
+                    <Link v-for="task in availableTasks" :key="task.id" :href="route('task.show', task.id)">
+                    <div class="py-3 pl-2 rounded hover:bg-gray-200">
+                        {{ task.brand }}
+                    </div>
                     </Link>
                 </div>
 
@@ -101,22 +80,18 @@ defineProps({
                         <h2 class="mt-5 mb-4">Check back here regularly, or</h2>
 
                         <Link :href="route('task.create')">
-                            <button class="text-lg btn btn-primary">
-                                Submit details for a new brand or store
-                            </button>
+                        <button class="text-lg btn btn-primary">
+                            Submit details for a new brand or store
+                        </button>
                         </Link>
                     </div>
                 </div>
             </div>
 
             <div class="w-full mt-auto">
-                <Carousel
-                    :breakpoints="breakpoints"
-                    :autoplay="5000"
-                    :wrap-around="true"
-                >
-                    <Slide v-for="(logo, index) in logos" :key="index">
-                        <img :src="logo.src" :alt="logo.alt" />
+                <Carousel :breakpoints="breakpoints" :autoplay="5000" :wrap-around="true">
+                    <Slide v-for="(brand, index) in brands" :key="index">
+                        <img :src="brand.logo_url" alt="not found" />
                     </Slide>
 
                     <template #addons>
