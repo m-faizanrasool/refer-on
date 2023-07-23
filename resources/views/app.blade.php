@@ -12,6 +12,11 @@
     @routes
     @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
     @inertiaHead
+
+    @production
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9816226353871385"
+            crossorigin="anonymous"></script>
+    @endproduction
 </head>
 
 <body class="antialiased">
