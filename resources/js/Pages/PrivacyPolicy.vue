@@ -20,26 +20,27 @@ import AppLayout from "../Layouts/AppLayout.vue";
                 data for our purposes.
             </p>
 
-            <h6>PERSONAL DATA</h6>
+            <ul class="!list-decimal !ml-8">
+                <h6 class="-ml-8">PERSONAL DATA</h6>
 
-            <ul>
                 <li>
                     As used in this Notice:
 
                     <ol>
                         <li>
-                            “User” means an individual who (a) has contacted us
-                            through any means to find out more about any
-                            services we provide, or (b) may, or has, entered
-                            into a contract with us for the supply of any
-                            services by us; and
+                            <strong>“User”</strong> means an individual who (a)
+                            has contacted us through any means to find out more
+                            about any services we provide, or (b) may, or has,
+                            entered into a contract with us for the supply of
+                            any services by us; and
                         </li>
 
                         <li>
-                            “Personal data” means data, whether true or not,
-                            about a User who can be identified: (a) from that
-                            data; or (b) from that data and other information to
-                            which we have or are likely to have access.
+                            <strong>“Personal data” </strong> means data,
+                            whether true or not, about a User who can be
+                            identified: (a) from that data; or (b) from that
+                            data and other information to which we have or are
+                            likely to have access.
                         </li>
                     </ol>
                 </li>
@@ -53,11 +54,11 @@ import AppLayout from "../Layouts/AppLayout.vue";
                     Other terms used in this Notice shall have the meanings
                     given to them in the PDPA (where the context so permits).
                 </li>
-            </ul>
 
-            <h6>COLLECTION, USE AND DISCLOSURE OF PERSONAL DATA</h6>
+                <h6 class="-ml-8">
+                    COLLECTION, USE AND DISCLOSURE OF PERSONAL DATA
+                </h6>
 
-            <ul>
                 <li>
                     We generally do not collect your personal data unless (a) it
                     is provided to us voluntarily by you directly or via a third
@@ -79,7 +80,7 @@ import AppLayout from "../Layouts/AppLayout.vue";
                     We may collect and use your personal data for any or all of
                     the following purposes:
 
-                    <ul>
+                    <ul class="!list-[lower-alpha]">
                         <li>verifying your identity;</li>
 
                         <li>
@@ -132,7 +133,7 @@ import AppLayout from "../Layouts/AppLayout.vue";
                 <li>
                     We may disclose your personal data:
 
-                    <ul>
+                    <ul class="!list-[lower-alpha]">
                         <li>
                             where such disclosure is required for performing
                             obligations in the course of or in connection with
@@ -156,20 +157,21 @@ import AppLayout from "../Layouts/AppLayout.vue";
                     (including, where applicable, a period to enable us to
                     enforce our rights with you).
                 </li>
-            </ul>
 
-            <h6>RELIANCE ON THE LEGITIMATE INTERESTS EXCEPTION</h6>
+                <h6 class="-ml-8">
+                    RELIANCE ON THE LEGITIMATE INTERESTS EXCEPTION
+                </h6>
 
-            <ul>
-                In compliance with the PDPA, we may collect, use or disclose
-                your personal data without your consent for the legitimate
-                interests of Referon or another person. In relying on the
-                legitimate interests exception of the PDPA, Referon will assess
-                the likely adverse effects on the individual and determine that
-                the legitimate interests outweigh any adverse effect.
-            </ul>
+                <div class="mb-4">
+                    In compliance with the PDPA, we may collect, use or disclose
+                    your personal data without your consent for the legitimate
+                    interests of Referon or another person. In relying on the
+                    legitimate interests exception of the PDPA, Referon will
+                    assess the likely adverse effects on the individual and
+                    determine that the legitimate interests outweigh any adverse
+                    effect.
+                </div>
 
-            <ul>
                 <li>
                     In line with the legitimate interests' exception, we will
                     collect, use or disclose your personal data for the
@@ -181,18 +183,16 @@ import AppLayout from "../Layouts/AppLayout.vue";
                         <li>Detection and prevention of misuse of services.</li>
                     </ul>
                 </li>
-            </ul>
 
-            <p>
-                The purposes listed in the above clause may continue to apply
-                even in situations where your relationship with us (for example,
-                pursuant to a contract) has been terminated or altered in any
-                way, for a reasonable period thereafter.
-            </p>
+                <p>
+                    The purposes listed in the above clause may continue to
+                    apply even in situations where your relationship with us
+                    (for example, pursuant to a contract) has been terminated or
+                    altered in any way, for a reasonable period thereafter.
+                </p>
 
-            <h6>WITHDRAWING YOUR CONSENT</h6>
+                <h6 class="-ml-8">WITHDRAWING YOUR CONSENT</h6>
 
-            <ul>
                 <li>
                     The consent that you provide for the collection, use and
                     disclosure of your personal data will remain valid until
@@ -225,11 +225,9 @@ import AppLayout from "../Layouts/AppLayout.vue";
                     Should you decide to cancel your withdrawal of consent,
                     please inform us in writing in the manner described above.
                 </li>
-            </ul>
 
-            <h6>ACCESS TO AND CORRECTION OF PERSONAL DATA</h6>
+                <h6 class="-ml-8">ACCESS TO AND CORRECTION OF PERSONAL DATA</h6>
 
-            <ul>
                 <li>
                     If you wish to make (a) an access request for access to a
                     copy of the personal data which we hold about you or
@@ -260,11 +258,9 @@ import AppLayout from "../Layouts/AppLayout.vue";
                     so (except where we are not required to do so under the
                     PDPA).
                 </li>
-            </ul>
 
-            <h6>PROTECTION OF PERSONAL DATA</h6>
+                <h6 class="-ml-8">PROTECTION OF PERSONAL DATA</h6>
 
-            <ul>
                 <li>
                     To safeguard your personal data from unauthorised access,
                     collection, use, disclosure, copying, modification, disposal
@@ -289,11 +285,9 @@ import AppLayout from "../Layouts/AppLayout.vue";
                     constantly reviewing and enhancing our information security
                     measures.
                 </li>
-            </ul>
 
-            <h6>ACCURACY OF PERSONAL DATA</h6>
+                <h6 class="-ml-8">ACCURACY OF PERSONAL DATA</h6>
 
-            <ul>
                 <li>
                     We generally rely on personal data provided by you (or your
                     authorised representative). In order to ensure that your
@@ -302,11 +296,9 @@ import AppLayout from "../Layouts/AppLayout.vue";
                     informing our Data Protection Officer in writing or via
                     email at the contact details provided below.
                 </li>
-            </ul>
 
-            <h6>RETENTION OF PERSONAL DATA</h6>
+                <h6 class="-ml-8">RETENTION OF PERSONAL DATA</h6>
 
-            <ul>
                 <li>
                     We may retain your personal data for as long as it is
                     necessary to fulfil the purpose for which it was collected,
@@ -321,11 +313,11 @@ import AppLayout from "../Layouts/AppLayout.vue";
                     collected, and is no longer necessary for legal or business
                     purposes.
                 </li>
-            </ul>
 
-            <h6>TRANSFERS OF PERSONAL DATA OUTSIDE OF SINGAPORE</h6>
+                <h6 class="-ml-8">
+                    TRANSFERS OF PERSONAL DATA OUTSIDE OF SINGAPORE
+                </h6>
 
-            <ul>
                 <li>
                     We generally do not transfer your personal data to countries
                     outside of Singapore. However, if we do so, we will obtain
@@ -334,11 +326,9 @@ import AppLayout from "../Layouts/AppLayout.vue";
                     a standard of protection that is at least comparable to that
                     provided under the PDPA.
                 </li>
-            </ul>
 
-            <h6>DATA PROTECTION OFFICER</h6>
+                <h6 class="-ml-8">DATA PROTECTION OFFICER</h6>
 
-            <ul>
                 <li>
                     You may contact our Data Protection Officer if you have any
                     enquiries or feedback on our personal data protection
@@ -349,11 +339,9 @@ import AppLayout from "../Layouts/AppLayout.vue";
                         <li>Email Address : info@referon.net</li>
                     </ol>
                 </li>
-            </ul>
 
-            <h6>EFFECT OF NOTICE AND CHANGES TO NOTICE</h6>
+                <h6 class="-ml-8">EFFECT OF NOTICE AND CHANGES TO NOTICE</h6>
 
-            <ul>
                 <li>
                     This Notice applies in conjunction with any other notices,
                     contractual clauses and consent clauses that apply in

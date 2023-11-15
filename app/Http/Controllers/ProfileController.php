@@ -53,7 +53,7 @@ class ProfileController extends Controller
             $task->country_name = $task->brand->country_name;
             $task->submitter_credits = 0;
             $task->demerit_points = 1;
-            $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
+            $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/y');
             return $task;
         });
 
@@ -72,7 +72,7 @@ class ProfileController extends Controller
             $task->submitter_credits = $task->executor && !in_array($task->status, ['INVALID', 'DISPUTED']) ? $task->brand->submitter_credits : 0;
             $task->executor_credits = !in_array($task->status, ['INVALID', 'DISPUTED']) ? $task->brand->executor_credits : 0;
             $task->demerit_points = ($task->status == 'INVALID' && $task->executor_id !== $user->id) || ($task->status == 'DISPUTED' && $task->executor_id === $user->id) ? 1 : 0;
-            $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/Y');
+            $task->formatted_created_at = Carbon::parse($task->created_at)->format('d/m/y');
             $task->can_dispute = $task->fulfilled_at && Carbon::parse($task->fulfilled_at)->diffInDays(Carbon::now()) >= 15;
             return $task;
         });

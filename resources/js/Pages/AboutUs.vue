@@ -44,7 +44,7 @@ import AppLayout from "../Layouts/AppLayout.vue";
                 to the users, benefits twice.
             </p>
 
-            <p>
+            <p class="!mb-10">
                 We are committed to creating a seamless and enjoyable community
                 experience for our users. By simplifying the referral process
                 and fostering a sense of community among users, we hope to make

@@ -53,24 +53,31 @@ const props = defineProps({
                 <div
                     class="flex flex-col justify-between mb-4 gap-y-3 md:items-center md:flex-row"
                 >
-                    <div class="flex items-center gap-2 text-xl font-bold">
-                        Codes that you fulfilled:
+                    <div
+                        class="flex flex-col gap-2 text-lg font-bold md:items-center md:text-xl md:flex-row"
+                    >
+                        <span> Codes that you fulfilled: </span>
 
-                        <TextInput
-                            type="text"
-                            class="w-32 text-center"
-                            :value="calculateTaskStats(tasks, 'executor').count"
-                            readonly
-                        />
+                        <div class="flex gap-2">
+                            <TextInput
+                                type="text"
+                                class="w-32 text-center"
+                                :value="
+                                    calculateTaskStats(tasks, 'executor').count
+                                "
+                                readonly
+                            />
 
-                        <TextInput
-                            type="text"
-                            class="w-32 text-center"
-                            :value="`$${
-                                calculateTaskStats(tasks, 'executor').earnings
-                            }`"
-                            readonly
-                        />
+                            <TextInput
+                                type="text"
+                                class="w-32 text-center"
+                                :value="`$${
+                                    calculateTaskStats(tasks, 'executor')
+                                        .earnings
+                                }`"
+                                readonly
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -81,26 +88,31 @@ const props = defineProps({
                 <div
                     class="flex flex-col justify-between mb-4 gap-y-3 md:items-center md:flex-row"
                 >
-                    <div class="flex items-center gap-2 text-xl font-bold">
-                        Your codes that other users fulfilled:
+                    <div
+                        class="flex flex-col gap-2 text-lg font-bold md:items-center md:text-xl md:flex-row"
+                    >
+                        <span> Your codes that other users fulfilled: </span>
 
-                        <TextInput
-                            type="text"
-                            class="w-32 text-center"
-                            :value="
-                                calculateTaskStats(tasks, 'submitter').count
-                            "
-                            readonly
-                        />
+                        <div class="flex gap-2">
+                            <TextInput
+                                type="text"
+                                class="w-32 text-center"
+                                :value="
+                                    calculateTaskStats(tasks, 'submitter').count
+                                "
+                                readonly
+                            />
 
-                        <TextInput
-                            type="text"
-                            class="w-32 text-center"
-                            :value="`$${
-                                calculateTaskStats(tasks, 'submitter').earnings
-                            }`"
-                            readonly
-                        />
+                            <TextInput
+                                type="text"
+                                class="w-32 text-center"
+                                :value="`$${
+                                    calculateTaskStats(tasks, 'submitter')
+                                        .earnings
+                                }`"
+                                readonly
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -111,25 +123,31 @@ const props = defineProps({
                 <div
                     class="flex flex-col justify-between mb-4 gap-y-3 md:items-center md:flex-row"
                 >
-                    <div class="flex items-center gap-2 text-xl font-bold">
-                        Blacklisted and Duplicated records:
+                    <div
+                        class="flex flex-col gap-2 text-lg font-bold md:items-center md:text-xl md:flex-row"
+                    >
+                        <span> Blacklisted and Duplicated records: </span>
 
-                        <TextInput
-                            type="text"
-                            class="w-32 text-center"
-                            :value="
-                                calculateTaskStats(blackDupTasks, 'submitter')
-                                    .count
-                            "
-                            readonly
-                        />
+                        <div class="flex gap-2">
+                            <TextInput
+                                type="text"
+                                class="w-32 text-center"
+                                :value="
+                                    calculateTaskStats(
+                                        blackDupTasks,
+                                        'submitter'
+                                    ).count
+                                "
+                                readonly
+                            />
 
-                        <TextInput
-                            type="text"
-                            class="w-32 text-center"
-                            value="$0"
-                            readonly
-                        />
+                            <TextInput
+                                type="text"
+                                class="w-32 text-center"
+                                value="$0"
+                                readonly
+                            />
+                        </div>
                     </div>
                 </div>
 

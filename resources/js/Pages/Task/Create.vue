@@ -35,7 +35,7 @@ const submit = () => {
         <h1 class="page-heading">Post Details For New Brand Or Store</h1>
 
         <div class="px-8 py-6 bg-gray-200 rounded-md">
-            <div class="mx-auto space-y-4 sm:w-1/2">
+            <div class="mx-auto space-y-3.5 sm:w-1/2">
                 <div>
                     <InputLabel
                         class="text-lg !font-bold"
@@ -43,14 +43,7 @@ const submit = () => {
                         value="Country"
                     />
 
-                    <TextInput
-                        id="country"
-                        type="text"
-                        class="block w-full"
-                        :placeholder="country.name"
-                        required
-                        disabled
-                    />
+                    <div v-text="country.name" class="pl-5"></div>
 
                     <InputError
                         class="!mt-1.5 ml-2"
@@ -114,7 +107,7 @@ const submit = () => {
                         id="country"
                         v-model="form.summary"
                         required
-                        class="w-full pl-4 overflow-hidden border-gray-300 shadow-xl rounded-3xl focus:ring-0"
+                        class="w-full pl-4 overflow-hidden border-gray-300 shadow-md rounded-3xl focus:ring-0"
                         placeholder="Netflix is a subscription-based video streaming service"
                     ></textarea>
 

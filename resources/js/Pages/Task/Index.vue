@@ -79,7 +79,7 @@ defineProps({
                                 !task.childs.length
                             "
                         >
-                            Fullfill
+                            Fulfill
                         </Link>
 
                         <button

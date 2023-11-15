@@ -52,6 +52,12 @@ defineExpose({
                                 >
                             </li>
 
+                            <li class="sidebar-item md:hidden">
+                                <Link :href="route('howitworks')"
+                                    >How it works</Link
+                                >
+                            </li>
+
                             <div v-if="$page.props.auth.user.is_admin">
                                 <li class="sidebar-item">
                                     <Link :href="route('user.index')"

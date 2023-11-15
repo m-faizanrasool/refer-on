@@ -97,7 +97,7 @@
     }
 
     .table-head > div {
-        @apply px-2 py-4 text-xs font-medium leading-none text-black m-[1px] min-w-[150px] p-1;
+        @apply px-2 py-4 text-xs font-medium leading-none text-black m-[1px] min-w-[135px] p-1;
     }
 
     .table-head:nth-child(odd) > div {
@@ -109,7 +109,6 @@
     }
 
     .table-head > div:nth-child(1),
-    .table-head > div:nth-child(2),
     .table-head > div:nth-child(3),
     .table-head > div:nth-child(7),
     .table-head > div:nth-child(9) {

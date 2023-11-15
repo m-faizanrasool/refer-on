@@ -7,21 +7,15 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 
 <template>
     <nav
-        class="flex items-center justify-between px-4 py-6 font-extrabold md:p-6"
+        class="sticky top-0 z-10 flex items-center justify-between px-4 py-6 font-extrabold bg-white md:p-6"
     >
-        <div class="flex items-center gap-2.5 md:gap-8">
-            <div class="flex items-center gap-2">
-                <div class="border-2 shadow-xl avatar">
-                    <img
-                        :class="`fi-${
-                            $page.props.country.data?.code.toLowerCase() ?? 'uk'
-                        }`"
-                    />
-                </div>
-
-                <div class="hidden text-lg md:block">
-                    {{ $page.props.country.data?.name ?? "Unknown" }}
-                </div>
+        <div class="flex items-center gap-2.5 md:gap-7">
+            <div class="border-2 shadow-xl avatar">
+                <img
+                    :class="`fi-${
+                        $page.props.country.data?.code.toLowerCase() ?? 'uk'
+                    }`"
+                />
             </div>
 
             <Link class="text-xl md:text-2xl text-spaced" href="/"

@@ -47,12 +47,20 @@ class TaskController extends Controller
             'brand.unique' => 'The :attribute name already exists.',
         ]);
 
+        $brandName = ucfirst($validatedData['brand']);
+
+        $summary = ucfirst($validatedData['summary']);
+
+        if (substr($summary, -1) !== '.') {
+            $summary .= '.';
+        }
+
         // create brand
         $brand = Brand::create([
-            'name' => $validatedData['brand'],
+            'name' =>  $brandName,
             'country_id' => $validatedData['country_id'],
             'website' => $validatedData['website'],
-            'summary' => $validatedData['summary'],
+            'summary' => $summary,
             'submitter_credits' => $validatedData['submitter_credits'],
             'executor_credits' => $validatedData['executor_credits'],
         ]);
